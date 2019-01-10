@@ -1,0 +1,17 @@
+.model Half_Adder
+.input a b 
+.output s c
+.names a n1
+NOT
+.names b n2
+NOT
+.names a n2 a1
+AND
+.names b n1 a2
+AND
+.names a1 a2 s
+AND
+.names a b c
+AND
+.end
+
