@@ -1,3 +1,4 @@
+# tomorow@ngc.is.ritsumei.ac.jp
 # writing by python3 
 # coding:utf-8
 # インポートz3
