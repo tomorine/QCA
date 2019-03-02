@@ -87,6 +87,8 @@ class Create_Network:
             if node.id == id:
                 return id
         return (-1)
+
+    
 # ネットワークの中身をプリントする関数        
 class Print_Network:
     @classmethod

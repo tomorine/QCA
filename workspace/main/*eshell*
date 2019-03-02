@@ -1,0 +1,4142 @@
+Welcome to the Emacs shell
+
+~/work/prog/QCA/workspace/main $ python3 
+Python 3.6.7 (default, Oct 22 2018, 11:32:17) 
+[GCC 8.2.0] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> lst = list(range(5))
+  File "<stdin>", line 1
+    lst = list(range(5))
+    ^
+IndentationError: unexpected indent
+>>>lst = list(range(5)) 
+>>> lst
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+NameError: name 'lst' is not defined
+>>> lst
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+NameError: name 'lst' is not defined
+>>> lst = list(range(5))
+>>> lst
+[0, 1, 2, 3, 4]
+>>> lsts = list(lst)
+>>> lsts
+[0, 1, 2, 3, 4]
+>>> lst[1]
+1
+>>> lst = list(range(0,5,0))
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+ValueError: range() arg 3 must not be zero
+>>> quit()
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif
+circuit name is Half_Adder
+primary input list
+--------------------
+a
+b
+
+int node list
+--------------------
+n1
+NOT
+--input--
+a
+--output--
+a2
+
+n2
+NOT
+--input--
+b
+--output--
+a1
+
+a1
+AND
+--input--
+a
+n2
+--output--
+node_to_s
+
+a2
+AND
+--input--
+b
+n1
+--output--
+node_to_s
+
+node_to_s
+AND
+--input--
+a1
+a2
+--output--
+s
+
+node_to_c
+AND
+--input--
+a
+b
+--output--
+c
+
+primary output list
+--------------------
+s
+c
+[[gate_exist[1][0][0], gate_exist[1][0][1], gate_exist[1][0][2], gate_exist[1][0][3]], [gate_exist[1][1][0], gate_exist[1][1][1], gate_exist[1][1][2], gate_exist[1][1][3]], [gate_exist[1][2][0], gate_exist[1][2][1], gate_exist[1][2][2], gate_exist[1][2][3]], [gate_exist[1][3][0], gate_exist[1][3][1], gate_exist[1][3][2], gate_exist[1][3][3]], [gate_exist[1][4][0], gate_exist[1][4][1], gate_exist[1][4][2], gate_exist[1][4][3]]]
+
+
+[[gate_exist[2][0][0], gate_exist[2][0][1], gate_exist[2][0][2], gate_exist[2][0][3]], [gate_exist[2][1][0], gate_exist[2][1][1], gate_exist[2][1][2], gate_exist[2][1][3]], [gate_exist[2][2][0], gate_exist[2][2][1], gate_exist[2][2][2], gate_exist[2][2][3]], [gate_exist[2][3][0], gate_exist[2][3][1], gate_exist[2][3][2], gate_exist[2][3][3]], [gate_exist[2][4][0], gate_exist[2][4][1], gate_exist[2][4][2], gate_exist[2][4][3]]]
+
+
+[[gate_exist[3][0][0], gate_exist[3][0][1], gate_exist[3][0][2], gate_exist[3][0][3]], [gate_exist[3][1][0], gate_exist[3][1][1], gate_exist[3][1][2], gate_exist[3][1][3]], [gate_exist[3][2][0], gate_exist[3][2][1], gate_exist[3][2][2], gate_exist[3][2][3]], [gate_exist[3][3][0], gate_exist[3][3][1], gate_exist[3][3][2], gate_exist[3][3][3]], [gate_exist[3][4][0], gate_exist[3][4][1], gate_exist[3][4][2], gate_exist[3][4][3]]]
+
+
+[[gate_exist[4][0][0], gate_exist[4][0][1], gate_exist[4][0][2], gate_exist[4][0][3]], [gate_exist[4][1][0], gate_exist[4][1][1], gate_exist[4][1][2], gate_exist[4][1][3]], [gate_exist[4][2][0], gate_exist[4][2][1], gate_exist[4][2][2], gate_exist[4][2][3]], [gate_exist[4][3][0], gate_exist[4][3][1], gate_exist[4][3][2], gate_exist[4][3][3]], [gate_exist[4][4][0], gate_exist[4][4][1], gate_exist[4][4][2], gate_exist[4][4][3]]]
+
+
+[[gate_exist[5][0][0], gate_exist[5][0][1], gate_exist[5][0][2], gate_exist[5][0][3]], [gate_exist[5][1][0], gate_exist[5][1][1], gate_exist[5][1][2], gate_exist[5][1][3]], [gate_exist[5][2][0], gate_exist[5][2][1], gate_exist[5][2][2], gate_exist[5][2][3]], [gate_exist[5][3][0], gate_exist[5][3][1], gate_exist[5][3][2], gate_exist[5][3][3]], [gate_exist[5][4][0], gate_exist[5][4][1], gate_exist[5][4][2], gate_exist[5][4][3]]]
+
+
+[[gate_exist[6][0][0], gate_exist[6][0][1], gate_exist[6][0][2], gate_exist[6][0][3]], [gate_exist[6][1][0], gate_exist[6][1][1], gate_exist[6][1][2], gate_exist[6][1][3]], [gate_exist[6][2][0], gate_exist[6][2][1], gate_exist[6][2][2], gate_exist[6][2][3]], [gate_exist[6][3][0], gate_exist[6][3][1], gate_exist[6][3][2], gate_exist[6][3][3]], [gate_exist[6][4][0], gate_exist[6][4][1], gate_exist[6][4][2], gate_exist[6][4][3]]]
+
+
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif
+circuit name is Half_Adder
+primary input list
+--------------------
+a
+b
+
+int node list
+--------------------
+n1
+NOT
+--input--
+a
+--output--
+a2
+
+n2
+NOT
+--input--
+b
+--output--
+a1
+
+a1
+AND
+--input--
+a
+n2
+--output--
+node_to_s
+
+a2
+AND
+--input--
+b
+n1
+--output--
+node_to_s
+
+node_to_s
+AND
+--input--
+a1
+a2
+--output--
+s
+
+node_to_c
+AND
+--input--
+a
+b
+--output--
+c
+
+primary output list
+--------------------
+s
+c
+Traceback (most recent call last):
+  File "main.py", line 45, in <module>
+    main()
+  File "main.py", line 34, in main
+    s.add = (Sum(Int(i)))
+  File "/home/tomorow/.local/lib/python3.6/site-packages/z3/z3.py", line 2993, in Int
+    return ArithRef(Z3_mk_const(ctx.ref(), to_symbol(name, ctx), IntSort(ctx).ast), ctx)
+  File "/home/tomorow/.local/lib/python3.6/site-packages/z3/z3.py", line 110, in to_symbol
+    return Z3_mk_string_symbol(_get_ctx(ctx).ref(), s)
+  File "/home/tomorow/.local/lib/python3.6/site-packages/z3/z3core.py", line 1484, in Z3_mk_string_symbol
+    r = _elems.f(a0, _to_ascii(a1))
+ctypes.ArgumentError: argument 2: <class 'TypeError'>: wrong type
+~/work/prog/QCA/workspace/main $ python main.py 
+  File "main.py", line 5
+SyntaxError: Non-ASCII character '\xe3' in file main.py on line 5, but no encoding declared; see http://python.org/dev/peps/pep-0263/ for details
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+circuit name is Half_Adder
+primary input list
+--------------------
+a
+b
+
+int node list
+--------------------
+n1
+NOT
+--input--
+a
+--output--
+a2
+
+n2
+NOT
+--input--
+b
+--output--
+a1
+
+a1
+AND
+--input--
+a
+n2
+--output--
+node_to_s
+
+a2
+AND
+--input--
+b
+n1
+--output--
+node_to_s
+
+node_to_s
+AND
+--input--
+a1
+a2
+--output--
+s
+
+node_to_c
+AND
+--input--
+a
+b
+--output--
+c
+
+primary output list
+--------------------
+s
+c
+Traceback (most recent call last):
+  File "main.py", line 43, in <module>
+    main()
+  File "main.py", line 34, in main
+    s.add = (Sum(Int(i))==1)
+  File "/home/tomorow/.local/lib/python3.6/site-packages/z3/z3.py", line 2993, in Int
+    return ArithRef(Z3_mk_const(ctx.ref(), to_symbol(name, ctx), IntSort(ctx).ast), ctx)
+  File "/home/tomorow/.local/lib/python3.6/site-packages/z3/z3.py", line 110, in to_symbol
+    return Z3_mk_string_symbol(_get_ctx(ctx).ref(), s)
+  File "/home/tomorow/.local/lib/python3.6/site-packages/z3/z3core.py", line 1484, in Z3_mk_string_symbol
+    r = _elems.f(a0, _to_ascii(a1))
+ctypes.ArgumentError: argument 2: <class 'TypeError'>: wrong type
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+circuit name is Half_Adder
+primary input list
+--------------------
+a
+b
+
+int node list
+--------------------
+n1
+NOT
+--input--
+a
+--output--
+a2
+
+n2
+NOT
+--input--
+b
+--output--
+a1
+
+a1
+AND
+--input--
+a
+n2
+--output--
+node_to_s
+
+a2
+AND
+--input--
+b
+n1
+--output--
+node_to_s
+
+node_to_s
+AND
+--input--
+a1
+a2
+--output--
+s
+
+node_to_c
+AND
+--input--
+a
+b
+--output--
+c
+
+primary output list
+--------------------
+s
+c
+Traceback (most recent call last):
+  File "main.py", line 43, in <module>
+    main()
+  File "main.py", line 34, in main
+    s.add = (Sum(j for j in i)==1)
+  File "/home/tomorow/.local/lib/python3.6/site-packages/z3/z3.py", line 8214, in Sum
+    return _reduce(lambda a, b: a + b, args, 0)
+  File "/home/tomorow/.local/lib/python3.6/site-packages/z3/z3.py", line 1081, in _reduce
+    r = f(r, e)
+  File "/home/tomorow/.local/lib/python3.6/site-packages/z3/z3.py", line 8214, in <lambda>
+    return _reduce(lambda a, b: a + b, args, 0)
+TypeError: unsupported operand type(s) for +: 'int' and 'generator'
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+circuit name is Half_Adder
+primary input list
+--------------------
+a
+b
+
+int node list
+--------------------
+n1
+NOT
+--input--
+a
+--output--
+a2
+
+n2
+NOT
+--input--
+b
+--output--
+a1
+
+a1
+AND
+--input--
+a
+n2
+--output--
+node_to_s
+
+a2
+AND
+--input--
+b
+n1
+--output--
+node_to_s
+
+node_to_s
+AND
+--input--
+a1
+a2
+--output--
+s
+
+node_to_c
+AND
+--input--
+a
+b
+--output--
+c
+
+primary output list
+--------------------
+s
+c
+Traceback (most recent call last):
+  File "main.py", line 43, in <module>
+    main()
+  File "main.py", line 34, in main
+    s.add = (Sum(Sum(k for k in j) for j in i)==1)
+  File "/home/tomorow/.local/lib/python3.6/site-packages/z3/z3.py", line 8214, in Sum
+    return _reduce(lambda a, b: a + b, args, 0)
+  File "/home/tomorow/.local/lib/python3.6/site-packages/z3/z3.py", line 1081, in _reduce
+    r = f(r, e)
+  File "/home/tomorow/.local/lib/python3.6/site-packages/z3/z3.py", line 8214, in <lambda>
+    return _reduce(lambda a, b: a + b, args, 0)
+TypeError: unsupported operand type(s) for +: 'int' and 'generator'
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+circuit name is Half_Adder
+primary input list
+--------------------
+a
+b
+
+int node list
+--------------------
+n1
+NOT
+--input--
+a
+--output--
+a2
+
+n2
+NOT
+--input--
+b
+--output--
+a1
+
+a1
+AND
+--input--
+a
+n2
+--output--
+node_to_s
+
+a2
+AND
+--input--
+b
+n1
+--output--
+node_to_s
+
+node_to_s
+AND
+--input--
+a1
+a2
+--output--
+s
+
+node_to_c
+AND
+--input--
+a
+b
+--output--
+c
+
+primary output list
+--------------------
+s
+c
+[x[0], x[1], x[2], x[3], x[4]]
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+circuit name is Half_Adder
+primary input list
+--------------------
+a
+b
+
+int node list
+--------------------
+n1
+NOT
+--input--
+a
+--output--
+a2
+
+n2
+NOT
+--input--
+b
+--output--
+a1
+
+a1
+AND
+--input--
+a
+n2
+--output--
+node_to_s
+
+a2
+AND
+--input--
+b
+n1
+--output--
+node_to_s
+
+node_to_s
+AND
+--input--
+a1
+a2
+--output--
+s
+
+node_to_c
+AND
+--input--
+a
+b
+--output--
+c
+
+primary output list
+--------------------
+s
+c
+[x[0], x[1], x[2], x[3], x[4]]
+Traceback (most recent call last):
+  File "main.py", line 47, in <module>
+    main()
+  File "main.py", line 40, in main
+    s.add = Sum([i for i in x])
+  File "/home/tomorow/.local/lib/python3.6/site-packages/z3/z3.py", line 8220, in Sum
+    return ArithRef(Z3_mk_add(ctx.ref(), sz, _args), ctx)
+  File "/home/tomorow/.local/lib/python3.6/site-packages/z3/z3core.py", line 1665, in Z3_mk_add
+    _elems.Check(a0)
+  File "/home/tomorow/.local/lib/python3.6/site-packages/z3/z3core.py", line 1352, in Check
+    raise self.Exception(self.get_error_message(ctx, err))
+z3.z3types.Z3Exception: b'Sort mismatch at argument #1 for function (declare-fun + (Int Int) Int) supplied sort is Bool'
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+circuit name is Half_Adder
+primary input list
+--------------------
+a
+b
+
+int node list
+--------------------
+n1
+NOT
+--input--
+a
+--output--
+a2
+
+n2
+NOT
+--input--
+b
+--output--
+a1
+
+a1
+AND
+--input--
+a
+n2
+--output--
+node_to_s
+
+a2
+AND
+--input--
+b
+n1
+--output--
+node_to_s
+
+node_to_s
+AND
+--input--
+a1
+a2
+--output--
+s
+
+node_to_c
+AND
+--input--
+a
+b
+--output--
+c
+
+primary output list
+--------------------
+s
+c
+Traceback (most recent call last):
+  File "main.py", line 47, in <module>
+    main()
+  File "main.py", line 38, in main
+    x = [lnt('x[%d]' % i)for i in range(5)]
+  File "main.py", line 38, in <listcomp>
+    x = [lnt('x[%d]' % i)for i in range(5)]
+NameError: name 'lnt' is not defined
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+circuit name is Half_Adder
+primary input list
+--------------------
+a
+b
+
+int node list
+--------------------
+n1
+NOT
+--input--
+a
+--output--
+a2
+
+n2
+NOT
+--input--
+b
+--output--
+a1
+
+a1
+AND
+--input--
+a
+n2
+--output--
+node_to_s
+
+a2
+AND
+--input--
+b
+n1
+--output--
+node_to_s
+
+node_to_s
+AND
+--input--
+a1
+a2
+--output--
+s
+
+node_to_c
+AND
+--input--
+a
+b
+--output--
+c
+
+primary output list
+--------------------
+s
+c
+[x[0], x[1], x[2], x[3], x[4]]
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+circuit name is Half_Adder
+primary input list
+--------------------
+a
+b
+
+int node list
+--------------------
+n1
+NOT
+--input--
+a
+--output--
+a2
+
+n2
+NOT
+--input--
+b
+--output--
+a1
+
+a1
+AND
+--input--
+a
+n2
+--output--
+node_to_s
+
+a2
+AND
+--input--
+b
+n1
+--output--
+node_to_s
+
+node_to_s
+AND
+--input--
+a1
+a2
+--output--
+s
+
+node_to_c
+AND
+--input--
+a
+b
+--output--
+c
+
+primary output list
+--------------------
+s
+c
+[x[0], x[1], x[2], x[3], x[4]]
+<bound method Solver.check of []>
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+circuit name is Half_Adder
+primary input list
+--------------------
+a
+b
+
+int node list
+--------------------
+n1
+NOT
+--input--
+a
+--output--
+a2
+
+n2
+NOT
+--input--
+b
+--output--
+a1
+
+a1
+AND
+--input--
+a
+n2
+--output--
+node_to_s
+
+a2
+AND
+--input--
+b
+n1
+--output--
+node_to_s
+
+node_to_s
+AND
+--input--
+a1
+a2
+--output--
+s
+
+node_to_c
+AND
+--input--
+a
+b
+--output--
+c
+
+primary output list
+--------------------
+s
+c
+[x[0], x[1], x[2], x[3], x[4]]
+<bound method Solver.check of []>
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+circuit name is Half_Adder
+primary input list
+--------------------
+a
+b
+
+int node list
+--------------------
+n1
+NOT
+--input--
+a
+--output--
+a2
+
+n2
+NOT
+--input--
+b
+--output--
+a1
+
+a1
+AND
+--input--
+a
+n2
+--output--
+node_to_s
+
+a2
+AND
+--input--
+b
+n1
+--output--
+node_to_s
+
+node_to_s
+AND
+--input--
+a1
+a2
+--output--
+s
+
+node_to_c
+AND
+--input--
+a
+b
+--output--
+c
+
+primary output list
+--------------------
+s
+c
+[x[0], x[1], x[2], x[3], x[4]]
+<bound method Solver.check of []>
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+circuit name is Half_Adder
+primary input list
+--------------------
+a
+b
+
+int node list
+--------------------
+n1
+NOT
+--input--
+a
+--output--
+a2
+
+n2
+NOT
+--input--
+b
+--output--
+a1
+
+a1
+AND
+--input--
+a
+n2
+--output--
+node_to_s
+
+a2
+AND
+--input--
+b
+n1
+--output--
+node_to_s
+
+node_to_s
+AND
+--input--
+a1
+a2
+--output--
+s
+
+node_to_c
+AND
+--input--
+a
+b
+--output--
+c
+
+primary output list
+--------------------
+s
+c
+[x[0], x[1], x[2], x[3], x[4]]
+<bound method Solver.model of []>
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+circuit name is Half_Adder
+primary input list
+--------------------
+a
+b
+
+int node list
+--------------------
+n1
+NOT
+--input--
+a
+--output--
+a2
+
+n2
+NOT
+--input--
+b
+--output--
+a1
+
+a1
+AND
+--input--
+a
+n2
+--output--
+node_to_s
+
+a2
+AND
+--input--
+b
+n1
+--output--
+node_to_s
+
+node_to_s
+AND
+--input--
+a1
+a2
+--output--
+s
+
+node_to_c
+AND
+--input--
+a
+b
+--output--
+c
+
+primary output list
+--------------------
+s
+c
+Traceback (most recent call last):
+  File "main.py", line 42, in <module>
+    main()
+  File "main.py", line 36, in main
+    s.add = (k>=0, k<=1)
+TypeError: '>=' not supported between instances of 'BoolRef' and 'int'
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+circuit name is Half_Adder
+primary input list
+--------------------
+a
+b
+
+int node list
+--------------------
+n1
+NOT
+--input--
+a
+--output--
+a2
+
+n2
+NOT
+--input--
+b
+--output--
+a1
+
+a1
+AND
+--input--
+a
+n2
+--output--
+node_to_s
+
+a2
+AND
+--input--
+b
+n1
+--output--
+node_to_s
+
+node_to_s
+AND
+--input--
+a1
+a2
+--output--
+s
+
+node_to_c
+AND
+--input--
+a
+b
+--output--
+c
+
+primary output list
+--------------------
+s
+c
+<bound method Solver.check of []>
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+circuit name is Half_Adder
+primary input list
+--------------------
+a
+b
+
+int node list
+--------------------
+n1
+NOT
+--input--
+a
+--output--
+a2
+
+n2
+NOT
+--input--
+b
+--output--
+a1
+
+a1
+AND
+--input--
+a
+n2
+--output--
+node_to_s
+
+a2
+AND
+--input--
+b
+n1
+--output--
+node_to_s
+
+node_to_s
+AND
+--input--
+a1
+a2
+--output--
+s
+
+node_to_c
+AND
+--input--
+a
+b
+--output--
+c
+
+primary output list
+--------------------
+s
+c
+[[[gate_exist[1][0][0], gate_exist[1][0][1], gate_exist[1][0][2], gate_exist[1][0][3]], [gate_exist[1][1][0], gate_exist[1][1][1], gate_exist[1][1][2], gate_exist[1][1][3]], [gate_exist[1][2][0], gate_exist[1][2][1], gate_exist[1][2][2], gate_exist[1][2][3]], [gate_exist[1][3][0], gate_exist[1][3][1], gate_exist[1][3][2], gate_exist[1][3][3]], [gate_exist[1][4][0], gate_exist[1][4][1], gate_exist[1][4][2], gate_exist[1][4][3]]], [[gate_exist[2][0][0], gate_exist[2][0][1], gate_exist[2][0][2], gate_exist[2][0][3]], [gate_exist[2][1][0], gate_exist[2][1][1], gate_exist[2][1][2], gate_exist[2][1][3]], [gate_exist[2][2][0], gate_exist[2][2][1], gate_exist[2][2][2], gate_exist[2][2][3]], [gate_exist[2][3][0], gate_exist[2][3][1], gate_exist[2][3][2], gate_exist[2][3][3]], [gate_exist[2][4][0], gate_exist[2][4][1], gate_exist[2][4][2], gate_exist[2][4][3]]], [[gate_exist[3][0][0], gate_exist[3][0][1], gate_exist[3][0][2], gate_exist[3][0][3]], [gate_exist[3][1][0], gate_exist[3][1][1], gate_exist[3][1][2], gate_exist[3][1][3]], [gate_exist[3][2][0], gate_exist[3][2][1], gate_exist[3][2][2], gate_exist[3][2][3]], [gate_exist[3][3][0], gate_exist[3][3][1], gate_exist[3][3][2], gate_exist[3][3][3]], [gate_exist[3][4][0], gate_exist[3][4][1], gate_exist[3][4][2], gate_exist[3][4][3]]], [[gate_exist[4][0][0], gate_exist[4][0][1], gate_exist[4][0][2], gate_exist[4][0][3]], [gate_exist[4][1][0], gate_exist[4][1][1], gate_exist[4][1][2], gate_exist[4][1][3]], [gate_exist[4][2][0], gate_exist[4][2][1], gate_exist[4][2][2], gate_exist[4][2][3]], [gate_exist[4][3][0], gate_exist[4][3][1], gate_exist[4][3][2], gate_exist[4][3][3]], [gate_exist[4][4][0], gate_exist[4][4][1], gate_exist[4][4][2], gate_exist[4][4][3]]], [[gate_exist[5][0][0], gate_exist[5][0][1], gate_exist[5][0][2], gate_exist[5][0][3]], [gate_exist[5][1][0], gate_exist[5][1][1], gate_exist[5][1][2], gate_exist[5][1][3]], [gate_exist[5][2][0], gate_exist[5][2][1], gate_exist[5][2][2], gate_exist[5][2][3]], [gate_exist[5][3][0], gate_exist[5][3][1], gate_exist[5][3][2], gate_exist[5][3][3]], [gate_exist[5][4][0], gate_exist[5][4][1], gate_exist[5][4][2], gate_exist[5][4][3]]], [[gate_exist[6][0][0], gate_exist[6][0][1], gate_exist[6][0][2], gate_exist[6][0][3]], [gate_exist[6][1][0], gate_exist[6][1][1], gate_exist[6][1][2], gate_exist[6][1][3]], [gate_exist[6][2][0], gate_exist[6][2][1], gate_exist[6][2][2], gate_exist[6][2][3]], [gate_exist[6][3][0], gate_exist[6][3][1], gate_exist[6][3][2], gate_exist[6][3][3]], [gate_exist[6][4][0], gate_exist[6][4][1], gate_exist[6][4][2], gate_exist[6][4][3]]]]
+<bound method Solver.check of []>
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+circuit name is Half_Adder
+primary input list
+--------------------
+a
+b
+
+int node list
+--------------------
+n1
+NOT
+--input--
+a
+--output--
+a2
+
+n2
+NOT
+--input--
+b
+--output--
+a1
+
+a1
+AND
+--input--
+a
+n2
+--output--
+node_to_s
+
+a2
+AND
+--input--
+b
+n1
+--output--
+node_to_s
+
+node_to_s
+AND
+--input--
+a1
+a2
+--output--
+s
+
+node_to_c
+AND
+--input--
+a
+b
+--output--
+c
+
+primary output list
+--------------------
+s
+c
+[[gate_exist[1][0][0], gate_exist[1][0][1], gate_exist[1][0][2], gate_exist[1][0][3]], [gate_exist[1][1][0], gate_exist[1][1][1], gate_exist[1][1][2], gate_exist[1][1][3]], [gate_exist[1][2][0], gate_exist[1][2][1], gate_exist[1][2][2], gate_exist[1][2][3]], [gate_exist[1][3][0], gate_exist[1][3][1], gate_exist[1][3][2], gate_exist[1][3][3]], [gate_exist[1][4][0], gate_exist[1][4][1], gate_exist[1][4][2], gate_exist[1][4][3]]]
+[[gate_exist[2][0][0], gate_exist[2][0][1], gate_exist[2][0][2], gate_exist[2][0][3]], [gate_exist[2][1][0], gate_exist[2][1][1], gate_exist[2][1][2], gate_exist[2][1][3]], [gate_exist[2][2][0], gate_exist[2][2][1], gate_exist[2][2][2], gate_exist[2][2][3]], [gate_exist[2][3][0], gate_exist[2][3][1], gate_exist[2][3][2], gate_exist[2][3][3]], [gate_exist[2][4][0], gate_exist[2][4][1], gate_exist[2][4][2], gate_exist[2][4][3]]]
+[[gate_exist[3][0][0], gate_exist[3][0][1], gate_exist[3][0][2], gate_exist[3][0][3]], [gate_exist[3][1][0], gate_exist[3][1][1], gate_exist[3][1][2], gate_exist[3][1][3]], [gate_exist[3][2][0], gate_exist[3][2][1], gate_exist[3][2][2], gate_exist[3][2][3]], [gate_exist[3][3][0], gate_exist[3][3][1], gate_exist[3][3][2], gate_exist[3][3][3]], [gate_exist[3][4][0], gate_exist[3][4][1], gate_exist[3][4][2], gate_exist[3][4][3]]]
+[[gate_exist[4][0][0], gate_exist[4][0][1], gate_exist[4][0][2], gate_exist[4][0][3]], [gate_exist[4][1][0], gate_exist[4][1][1], gate_exist[4][1][2], gate_exist[4][1][3]], [gate_exist[4][2][0], gate_exist[4][2][1], gate_exist[4][2][2], gate_exist[4][2][3]], [gate_exist[4][3][0], gate_exist[4][3][1], gate_exist[4][3][2], gate_exist[4][3][3]], [gate_exist[4][4][0], gate_exist[4][4][1], gate_exist[4][4][2], gate_exist[4][4][3]]]
+[[gate_exist[5][0][0], gate_exist[5][0][1], gate_exist[5][0][2], gate_exist[5][0][3]], [gate_exist[5][1][0], gate_exist[5][1][1], gate_exist[5][1][2], gate_exist[5][1][3]], [gate_exist[5][2][0], gate_exist[5][2][1], gate_exist[5][2][2], gate_exist[5][2][3]], [gate_exist[5][3][0], gate_exist[5][3][1], gate_exist[5][3][2], gate_exist[5][3][3]], [gate_exist[5][4][0], gate_exist[5][4][1], gate_exist[5][4][2], gate_exist[5][4][3]]]
+[[gate_exist[6][0][0], gate_exist[6][0][1], gate_exist[6][0][2], gate_exist[6][0][3]], [gate_exist[6][1][0], gate_exist[6][1][1], gate_exist[6][1][2], gate_exist[6][1][3]], [gate_exist[6][2][0], gate_exist[6][2][1], gate_exist[6][2][2], gate_exist[6][2][3]], [gate_exist[6][3][0], gate_exist[6][3][1], gate_exist[6][3][2], gate_exist[6][3][3]], [gate_exist[6][4][0], gate_exist[6][4][1], gate_exist[6][4][2], gate_exist[6][4][3]]]
+<bound method Solver.check of []>
+~/work/prog/QCA/workspace/main $ [[gate_exist[4][0][0], gate_exist[4][0][1], gate_exist[4][0][2], gate_exist[4][0][3]], [gate_exist[4][1][0], gate_exist[4][1][1], gate_exist[4][1][2], gate_exist[4][1][3]], [gate_exist[4][2][0], gate_exist[4][2][1], gate_exist[4][2][2], gate_exist[4][2][3]], [gate_exist[4][3][0], gate_exist[4][3][1], gate_exist[4][3][2], gate_exist[4][3][3]], [gate_exist[4][4][0], gate_exist[4][4][1], gate_exist[4][4][2], gate_exist[4][4][3]]]
+[[gate_exist[4][0][0], gate_exist[4][0][1], gate_exist[4][0][2], gate_exist[4][0][3]],: command not found
+~/work/prog/QCA/workspace/main $ [[gate_exist[4][0][0], gate_exist[4][0][1], gate_exist[4][0][2], gate_exist[4][0][3]], [gate_exist[4][1][0], gate_exist[4][1][1], gate_exist[4][1][2], gate_exist[4][1][3]], [gate_exist[4][2][0], gate_exist[4][2][1], gate_exist[4][2][2], gate_exist[4][2][3]], [gate_exist[4][3][0], gate_exist[4][3][1], gate_exist[4][3][2], gate_exist[4][3][3]], [gate_exist[4][4][0], gate_exist[4][4][1], gate_exist[4][4][2], gate_exist[4][4][3]]]
+[[gate_exist[4][0][0], gate_exist[4][0][1], gate_exist[4][0][2], gate_exist[4][0][3]],: command not found
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+circuit name is Half_Adder
+primary input list
+--------------------
+a
+b
+
+int node list
+--------------------
+n1
+NOT
+--input--
+a
+--output--
+a2
+
+n2
+NOT
+--input--
+b
+--output--
+a1
+
+a1
+AND
+--input--
+a
+n2
+--output--
+node_to_s
+
+a2
+AND
+--input--
+b
+n1
+--output--
+node_to_s
+
+node_to_s
+AND
+--input--
+a1
+a2
+--output--
+s
+
+node_to_c
+AND
+--input--
+a
+b
+--output--
+c
+
+primary output list
+--------------------
+s
+c
+[[gate_exist[1][0][0], gate_exist[1][0][1], gate_exist[1][0][2], gate_exist[1][0][3]], [gate_exist[1][1][0], gate_exist[1][1][1], gate_exist[1][1][2], gate_exist[1][1][3]], [gate_exist[1][2][0], gate_exist[1][2][1], gate_exist[1][2][2], gate_exist[1][2][3]], [gate_exist[1][3][0], gate_exist[1][3][1], gate_exist[1][3][2], gate_exist[1][3][3]], [gate_exist[1][4][0], gate_exist[1][4][1], gate_exist[1][4][2], gate_exist[1][4][3]]]
+
+
+[[gate_exist[2][0][0], gate_exist[2][0][1], gate_exist[2][0][2], gate_exist[2][0][3]], [gate_exist[2][1][0], gate_exist[2][1][1], gate_exist[2][1][2], gate_exist[2][1][3]], [gate_exist[2][2][0], gate_exist[2][2][1], gate_exist[2][2][2], gate_exist[2][2][3]], [gate_exist[2][3][0], gate_exist[2][3][1], gate_exist[2][3][2], gate_exist[2][3][3]], [gate_exist[2][4][0], gate_exist[2][4][1], gate_exist[2][4][2], gate_exist[2][4][3]]]
+
+
+[[gate_exist[3][0][0], gate_exist[3][0][1], gate_exist[3][0][2], gate_exist[3][0][3]], [gate_exist[3][1][0], gate_exist[3][1][1], gate_exist[3][1][2], gate_exist[3][1][3]], [gate_exist[3][2][0], gate_exist[3][2][1], gate_exist[3][2][2], gate_exist[3][2][3]], [gate_exist[3][3][0], gate_exist[3][3][1], gate_exist[3][3][2], gate_exist[3][3][3]], [gate_exist[3][4][0], gate_exist[3][4][1], gate_exist[3][4][2], gate_exist[3][4][3]]]
+
+
+[[gate_exist[4][0][0], gate_exist[4][0][1], gate_exist[4][0][2], gate_exist[4][0][3]], [gate_exist[4][1][0], gate_exist[4][1][1], gate_exist[4][1][2], gate_exist[4][1][3]], [gate_exist[4][2][0], gate_exist[4][2][1], gate_exist[4][2][2], gate_exist[4][2][3]], [gate_exist[4][3][0], gate_exist[4][3][1], gate_exist[4][3][2], gate_exist[4][3][3]], [gate_exist[4][4][0], gate_exist[4][4][1], gate_exist[4][4][2], gate_exist[4][4][3]]]
+
+
+[[gate_exist[5][0][0], gate_exist[5][0][1], gate_exist[5][0][2], gate_exist[5][0][3]], [gate_exist[5][1][0], gate_exist[5][1][1], gate_exist[5][1][2], gate_exist[5][1][3]], [gate_exist[5][2][0], gate_exist[5][2][1], gate_exist[5][2][2], gate_exist[5][2][3]], [gate_exist[5][3][0], gate_exist[5][3][1], gate_exist[5][3][2], gate_exist[5][3][3]], [gate_exist[5][4][0], gate_exist[5][4][1], gate_exist[5][4][2], gate_exist[5][4][3]]]
+
+
+[[gate_exist[6][0][0], gate_exist[6][0][1], gate_exist[6][0][2], gate_exist[6][0][3]], [gate_exist[6][1][0], gate_exist[6][1][1], gate_exist[6][1][2], gate_exist[6][1][3]], [gate_exist[6][2][0], gate_exist[6][2][1], gate_exist[6][2][2], gate_exist[6][2][3]], [gate_exist[6][3][0], gate_exist[6][3][1], gate_exist[6][3][2], gate_exist[6][3][3]], [gate_exist[6][4][0], gate_exist[6][4][1], gate_exist[6][4][2], gate_exist[6][4][3]]]
+
+
+<bound method Solver.check of []>
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+circuit name is Half_Adder
+primary input list
+--------------------
+a
+b
+
+int node list
+--------------------
+n1
+NOT
+--input--
+a
+--output--
+a2
+
+n2
+NOT
+--input--
+b
+--output--
+a1
+
+a1
+AND
+--input--
+a
+n2
+--output--
+node_to_s
+
+a2
+AND
+--input--
+b
+n1
+--output--
+node_to_s
+
+node_to_s
+AND
+--input--
+a1
+a2
+--output--
+s
+
+node_to_c
+AND
+--input--
+a
+b
+--output--
+c
+
+primary output list
+--------------------
+s
+c
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+circuit name is Half_Adder
+primary input list
+--------------------
+a
+b
+
+int node list
+--------------------
+n1
+NOT
+--input--
+a
+--output--
+a2
+
+n2
+NOT
+--input--
+b
+--output--
+a1
+
+a1
+AND
+--input--
+a
+n2
+--output--
+node_to_s
+
+a2
+AND
+--input--
+b
+n1
+--output--
+node_to_s
+
+node_to_s
+AND
+--input--
+a1
+a2
+--output--
+s
+
+node_to_c
+AND
+--input--
+a
+b
+--output--
+c
+
+primary output list
+--------------------
+s
+c
+gate_exist[1][0][0]
+gate_exist[1][0][1]
+gate_exist[1][0][2]
+gate_exist[1][0][3]
+gate_exist[1][1][0]
+gate_exist[1][1][1]
+gate_exist[1][1][2]
+gate_exist[1][1][3]
+gate_exist[1][2][0]
+gate_exist[1][2][1]
+gate_exist[1][2][2]
+gate_exist[1][2][3]
+gate_exist[1][3][0]
+gate_exist[1][3][1]
+gate_exist[1][3][2]
+gate_exist[1][3][3]
+gate_exist[1][4][0]
+gate_exist[1][4][1]
+gate_exist[1][4][2]
+gate_exist[1][4][3]
+gate_exist[2][0][0]
+gate_exist[2][0][1]
+gate_exist[2][0][2]
+gate_exist[2][0][3]
+gate_exist[2][1][0]
+gate_exist[2][1][1]
+gate_exist[2][1][2]
+gate_exist[2][1][3]
+gate_exist[2][2][0]
+gate_exist[2][2][1]
+gate_exist[2][2][2]
+gate_exist[2][2][3]
+gate_exist[2][3][0]
+gate_exist[2][3][1]
+gate_exist[2][3][2]
+gate_exist[2][3][3]
+gate_exist[2][4][0]
+gate_exist[2][4][1]
+gate_exist[2][4][2]
+gate_exist[2][4][3]
+gate_exist[3][0][0]
+gate_exist[3][0][1]
+gate_exist[3][0][2]
+gate_exist[3][0][3]
+gate_exist[3][1][0]
+gate_exist[3][1][1]
+gate_exist[3][1][2]
+gate_exist[3][1][3]
+gate_exist[3][2][0]
+gate_exist[3][2][1]
+gate_exist[3][2][2]
+gate_exist[3][2][3]
+gate_exist[3][3][0]
+gate_exist[3][3][1]
+gate_exist[3][3][2]
+gate_exist[3][3][3]
+gate_exist[3][4][0]
+gate_exist[3][4][1]
+gate_exist[3][4][2]
+gate_exist[3][4][3]
+gate_exist[4][0][0]
+gate_exist[4][0][1]
+gate_exist[4][0][2]
+gate_exist[4][0][3]
+gate_exist[4][1][0]
+gate_exist[4][1][1]
+gate_exist[4][1][2]
+gate_exist[4][1][3]
+gate_exist[4][2][0]
+gate_exist[4][2][1]
+gate_exist[4][2][2]
+gate_exist[4][2][3]
+gate_exist[4][3][0]
+gate_exist[4][3][1]
+gate_exist[4][3][2]
+gate_exist[4][3][3]
+gate_exist[4][4][0]
+gate_exist[4][4][1]
+gate_exist[4][4][2]
+gate_exist[4][4][3]
+gate_exist[5][0][0]
+gate_exist[5][0][1]
+gate_exist[5][0][2]
+gate_exist[5][0][3]
+gate_exist[5][1][0]
+gate_exist[5][1][1]
+gate_exist[5][1][2]
+gate_exist[5][1][3]
+gate_exist[5][2][0]
+gate_exist[5][2][1]
+gate_exist[5][2][2]
+gate_exist[5][2][3]
+gate_exist[5][3][0]
+gate_exist[5][3][1]
+gate_exist[5][3][2]
+gate_exist[5][3][3]
+gate_exist[5][4][0]
+gate_exist[5][4][1]
+gate_exist[5][4][2]
+gate_exist[5][4][3]
+gate_exist[6][0][0]
+gate_exist[6][0][1]
+gate_exist[6][0][2]
+gate_exist[6][0][3]
+gate_exist[6][1][0]
+gate_exist[6][1][1]
+gate_exist[6][1][2]
+gate_exist[6][1][3]
+gate_exist[6][2][0]
+gate_exist[6][2][1]
+gate_exist[6][2][2]
+gate_exist[6][2][3]
+gate_exist[6][3][0]
+gate_exist[6][3][1]
+gate_exist[6][3][2]
+gate_exist[6][3][3]
+gate_exist[6][4][0]
+gate_exist[6][4][1]
+gate_exist[6][4][2]
+gate_exist[6][4][3]
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+circuit name is Half_Adder
+primary input list
+--------------------
+a
+b
+
+int node list
+--------------------
+n1
+NOT
+--input--
+a
+--output--
+a2
+
+n2
+NOT
+--input--
+b
+--output--
+a1
+
+a1
+AND
+--input--
+a
+n2
+--output--
+node_to_s
+
+a2
+AND
+--input--
+b
+n1
+--output--
+node_to_s
+
+node_to_s
+AND
+--input--
+a1
+a2
+--output--
+s
+
+node_to_c
+AND
+--input--
+a
+b
+--output--
+c
+
+primary output list
+--------------------
+s
+c
+Traceback (most recent call last):
+  File "main.py", line 45, in <module>
+    main()
+  File "main.py", line 33, in main
+    GateExistIsBool(gate_exist,s)
+  File "main.py", line 40, in GateExistIsBool
+    print(Int(k))
+  File "/home/tomorow/.local/lib/python3.6/site-packages/z3/z3.py", line 2993, in Int
+    return ArithRef(Z3_mk_const(ctx.ref(), to_symbol(name, ctx), IntSort(ctx).ast), ctx)
+  File "/home/tomorow/.local/lib/python3.6/site-packages/z3/z3.py", line 110, in to_symbol
+    return Z3_mk_string_symbol(_get_ctx(ctx).ref(), s)
+  File "/home/tomorow/.local/lib/python3.6/site-packages/z3/z3core.py", line 1484, in Z3_mk_string_symbol
+    r = _elems.f(a0, _to_ascii(a1))
+ctypes.ArgumentError: argument 2: <class 'TypeError'>: wrong type
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+circuit name is Half_Adder
+primary input list
+--------------------
+a
+b
+
+int node list
+--------------------
+n1
+NOT
+--input--
+a
+--output--
+a2
+
+n2
+NOT
+--input--
+b
+--output--
+a1
+
+a1
+AND
+--input--
+a
+n2
+--output--
+node_to_s
+
+a2
+AND
+--input--
+b
+n1
+--output--
+node_to_s
+
+node_to_s
+AND
+--input--
+a1
+a2
+--output--
+s
+
+node_to_c
+AND
+--input--
+a
+b
+--output--
+c
+
+primary output list
+--------------------
+s
+c
+gate_exist[1][0][0]
+gate_exist[1][0][1]
+gate_exist[1][0][2]
+gate_exist[1][0][3]
+gate_exist[1][1][0]
+gate_exist[1][1][1]
+gate_exist[1][1][2]
+gate_exist[1][1][3]
+gate_exist[1][2][0]
+gate_exist[1][2][1]
+gate_exist[1][2][2]
+gate_exist[1][2][3]
+gate_exist[1][3][0]
+gate_exist[1][3][1]
+gate_exist[1][3][2]
+gate_exist[1][3][3]
+gate_exist[1][4][0]
+gate_exist[1][4][1]
+gate_exist[1][4][2]
+gate_exist[1][4][3]
+gate_exist[2][0][0]
+gate_exist[2][0][1]
+gate_exist[2][0][2]
+gate_exist[2][0][3]
+gate_exist[2][1][0]
+gate_exist[2][1][1]
+gate_exist[2][1][2]
+gate_exist[2][1][3]
+gate_exist[2][2][0]
+gate_exist[2][2][1]
+gate_exist[2][2][2]
+gate_exist[2][2][3]
+gate_exist[2][3][0]
+gate_exist[2][3][1]
+gate_exist[2][3][2]
+gate_exist[2][3][3]
+gate_exist[2][4][0]
+gate_exist[2][4][1]
+gate_exist[2][4][2]
+gate_exist[2][4][3]
+gate_exist[3][0][0]
+gate_exist[3][0][1]
+gate_exist[3][0][2]
+gate_exist[3][0][3]
+gate_exist[3][1][0]
+gate_exist[3][1][1]
+gate_exist[3][1][2]
+gate_exist[3][1][3]
+gate_exist[3][2][0]
+gate_exist[3][2][1]
+gate_exist[3][2][2]
+gate_exist[3][2][3]
+gate_exist[3][3][0]
+gate_exist[3][3][1]
+gate_exist[3][3][2]
+gate_exist[3][3][3]
+gate_exist[3][4][0]
+gate_exist[3][4][1]
+gate_exist[3][4][2]
+gate_exist[3][4][3]
+gate_exist[4][0][0]
+gate_exist[4][0][1]
+gate_exist[4][0][2]
+gate_exist[4][0][3]
+gate_exist[4][1][0]
+gate_exist[4][1][1]
+gate_exist[4][1][2]
+gate_exist[4][1][3]
+gate_exist[4][2][0]
+gate_exist[4][2][1]
+gate_exist[4][2][2]
+gate_exist[4][2][3]
+gate_exist[4][3][0]
+gate_exist[4][3][1]
+gate_exist[4][3][2]
+gate_exist[4][3][3]
+gate_exist[4][4][0]
+gate_exist[4][4][1]
+gate_exist[4][4][2]
+gate_exist[4][4][3]
+gate_exist[5][0][0]
+gate_exist[5][0][1]
+gate_exist[5][0][2]
+gate_exist[5][0][3]
+gate_exist[5][1][0]
+gate_exist[5][1][1]
+gate_exist[5][1][2]
+gate_exist[5][1][3]
+gate_exist[5][2][0]
+gate_exist[5][2][1]
+gate_exist[5][2][2]
+gate_exist[5][2][3]
+gate_exist[5][3][0]
+gate_exist[5][3][1]
+gate_exist[5][3][2]
+gate_exist[5][3][3]
+gate_exist[5][4][0]
+gate_exist[5][4][1]
+gate_exist[5][4][2]
+gate_exist[5][4][3]
+gate_exist[6][0][0]
+gate_exist[6][0][1]
+gate_exist[6][0][2]
+gate_exist[6][0][3]
+gate_exist[6][1][0]
+gate_exist[6][1][1]
+gate_exist[6][1][2]
+gate_exist[6][1][3]
+gate_exist[6][2][0]
+gate_exist[6][2][1]
+gate_exist[6][2][2]
+gate_exist[6][2][3]
+gate_exist[6][3][0]
+gate_exist[6][3][1]
+gate_exist[6][3][2]
+gate_exist[6][3][3]
+gate_exist[6][4][0]
+gate_exist[6][4][1]
+gate_exist[6][4][2]
+gate_exist[6][4][3]
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+circuit name is Half_Adder
+primary input list
+--------------------
+a
+b
+
+int node list
+--------------------
+n1
+NOT
+--input--
+a
+--output--
+a2
+
+n2
+NOT
+--input--
+b
+--output--
+a1
+
+a1
+AND
+--input--
+a
+n2
+--output--
+node_to_s
+
+a2
+AND
+--input--
+b
+n1
+--output--
+node_to_s
+
+node_to_s
+AND
+--input--
+a1
+a2
+--output--
+s
+
+node_to_c
+AND
+--input--
+a
+b
+--output--
+c
+
+primary output list
+--------------------
+s
+c
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+circuit name is Half_Adder
+primary input list
+--------------------
+a
+b
+
+int node list
+--------------------
+n1
+NOT
+--input--
+a
+--output--
+a2
+
+n2
+NOT
+--input--
+b
+--output--
+a1
+
+a1
+AND
+--input--
+a
+n2
+--output--
+node_to_s
+
+a2
+AND
+--input--
+b
+n1
+--output--
+node_to_s
+
+node_to_s
+AND
+--input--
+a1
+a2
+--output--
+s
+
+node_to_c
+AND
+--input--
+a
+b
+--output--
+c
+
+primary output list
+--------------------
+s
+c
+Traceback (most recent call last):
+  File "main.py", line 44, in <module>
+    main()
+  File "main.py", line 33, in main
+    SetBool(gate_exist,s)
+  File "main.py", line 37, in SetBool
+    for i in range(1, len(circ.intnode)+1):
+NameError: name 'circ' is not defined
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+circuit name is Half_Adder
+primary input list
+--------------------
+a
+b
+
+int node list
+--------------------
+n1
+NOT
+--input--
+a
+--output--
+a2
+
+n2
+NOT
+--input--
+b
+--output--
+a1
+
+a1
+AND
+--input--
+a
+n2
+--output--
+node_to_s
+
+a2
+AND
+--input--
+b
+n1
+--output--
+node_to_s
+
+node_to_s
+AND
+--input--
+a1
+a2
+--output--
+s
+
+node_to_c
+AND
+--input--
+a
+b
+--output--
+c
+
+primary output list
+--------------------
+s
+c
+Traceback (most recent call last):
+  File "main.py", line 41, in <module>
+    main()
+  File "main.py", line 37, in main
+    s.add(0 <= gate_exist[i][j][k], gate_exist[i][j][k] <= 1)
+IndexError: list index out of range
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+circuit name is Half_Adder
+primary input list
+--------------------
+a
+b
+
+int node list
+--------------------
+n1
+NOT
+--input--
+a
+--output--
+a2
+
+n2
+NOT
+--input--
+b
+--output--
+a1
+
+a1
+AND
+--input--
+a
+n2
+--output--
+node_to_s
+
+a2
+AND
+--input--
+b
+n1
+--output--
+node_to_s
+
+node_to_s
+AND
+--input--
+a1
+a2
+--output--
+s
+
+node_to_c
+AND
+--input--
+a
+b
+--output--
+c
+
+primary output list
+--------------------
+s
+c
+<bound method Solver.check of [gate_exist[2][0][0] >= 0,
+ gate_exist[2][0][0] <= 1,
+ gate_exist[2][0][1] >= 0,
+ gate_exist[2][0][1] <= 1,
+ gate_exist[2][0][2] >= 0,
+ gate_exist[2][0][2] <= 1,
+ gate_exist[2][0][3] >= 0,
+ gate_exist[2][0][3] <= 1,
+ gate_exist[2][1][0] >= 0,
+ gate_exist[2][1][0] <= 1,
+ gate_exist[2][1][1] >= 0,
+ gate_exist[2][1][1] <= 1,
+ gate_exist[2][1][2] >= 0,
+ gate_exist[2][1][2] <= 1,
+ gate_exist[2][1][3] >= 0,
+ gate_exist[2][1][3] <= 1,
+ gate_exist[2][2][0] >= 0,
+ gate_exist[2][2][0] <= 1,
+ gate_exist[2][2][1] >= 0,
+ gate_exist[2][2][1] <= 1,
+ gate_exist[2][2][2] >= 0,
+ gate_exist[2][2][2] <= 1,
+ gate_exist[2][2][3] >= 0,
+ gate_exist[2][2][3] <= 1,
+ gate_exist[2][3][0] >= 0,
+ gate_exist[2][3][0] <= 1,
+ gate_exist[2][3][1] >= 0,
+ gate_exist[2][3][1] <= 1,
+ gate_exist[2][3][2] >= 0,
+ gate_exist[2][3][2] <= 1,
+ gate_exist[2][3][3] >= 0,
+ gate_exist[2][3][3] <= 1,
+ gate_exist[2][4][0] >= 0,
+ gate_exist[2][4][0] <= 1,
+ gate_exist[2][4][1] >= 0,
+ gate_exist[2][4][1] <= 1,
+ gate_exist[2][4][2] >= 0,
+ gate_exist[2][4][2] <= 1,
+ gate_exist[2][4][3] >= 0,
+ gate_exist[2][4][3] <= 1,
+ gate_exist[3][0][0] >= 0,
+ gate_exist[3][0][0] <= 1,
+ gate_exist[3][0][1] >= 0,
+ gate_exist[3][0][1] <= 1,
+ gate_exist[3][0][2] >= 0,
+ gate_exist[3][0][2] <= 1,
+ gate_exist[3][0][3] >= 0,
+ gate_exist[3][0][3] <= 1,
+ gate_exist[3][1][0] >= 0,
+ gate_exist[3][1][0] <= 1,
+ gate_exist[3][1][1] >= 0,
+ gate_exist[3][1][1] <= 1,
+ gate_exist[3][1][2] >= 0,
+ gate_exist[3][1][2] <= 1,
+ gate_exist[3][1][3] >= 0,
+ gate_exist[3][1][3] <= 1,
+ gate_exist[3][2][0] >= 0,
+ gate_exist[3][2][0] <= 1,
+ gate_exist[3][2][1] >= 0,
+ gate_exist[3][2][1] <= 1,
+ gate_exist[3][2][2] >= 0,
+ gate_exist[3][2][2] <= 1,
+ gate_exist[3][2][3] >= 0,
+ gate_exist[3][2][3] <= 1,
+ gate_exist[3][3][0] >= 0,
+ gate_exist[3][3][0] <= 1,
+ gate_exist[3][3][1] >= 0,
+ gate_exist[3][3][1] <= 1,
+ gate_exist[3][3][2] >= 0,
+ gate_exist[3][3][2] <= 1,
+ gate_exist[3][3][3] >= 0,
+ gate_exist[3][3][3] <= 1,
+ gate_exist[3][4][0] >= 0,
+ gate_exist[3][4][0] <= 1,
+ gate_exist[3][4][1] >= 0,
+ gate_exist[3][4][1] <= 1,
+ gate_exist[3][4][2] >= 0,
+ gate_exist[3][4][2] <= 1,
+ gate_exist[3][4][3] >= 0,
+ gate_exist[3][4][3] <= 1,
+ gate_exist[4][0][0] >= 0,
+ gate_exist[4][0][0] <= 1,
+ gate_exist[4][0][1] >= 0,
+ gate_exist[4][0][1] <= 1,
+ gate_exist[4][0][2] >= 0,
+ gate_exist[4][0][2] <= 1,
+ gate_exist[4][0][3] >= 0,
+ gate_exist[4][0][3] <= 1,
+ gate_exist[4][1][0] >= 0,
+ gate_exist[4][1][0] <= 1,
+ gate_exist[4][1][1] >= 0,
+ gate_exist[4][1][1] <= 1,
+ gate_exist[4][1][2] >= 0,
+ gate_exist[4][1][2] <= 1,
+ gate_exist[4][1][3] >= 0,
+ gate_exist[4][1][3] <= 1,
+ gate_exist[4][2][0] >= 0,
+ gate_exist[4][2][0] <= 1,
+ gate_exist[4][2][1] >= 0,
+ gate_exist[4][2][1] <= 1,
+ gate_exist[4][2][2] >= 0,
+ gate_exist[4][2][2] <= 1,
+ gate_exist[4][2][3] >= 0,
+ gate_exist[4][2][3] <= 1,
+ gate_exist[4][3][0] >= 0,
+ gate_exist[4][3][0] <= 1,
+ gate_exist[4][3][1] >= 0,
+ gate_exist[4][3][1] <= 1,
+ gate_exist[4][3][2] >= 0,
+ gate_exist[4][3][2] <= 1,
+ gate_exist[4][3][3] >= 0,
+ gate_exist[4][3][3] <= 1,
+ gate_exist[4][4][0] >= 0,
+ gate_exist[4][4][0] <= 1,
+ gate_exist[4][4][1] >= 0,
+ gate_exist[4][4][1] <= 1,
+ gate_exist[4][4][2] >= 0,
+ gate_exist[4][4][2] <= 1,
+ gate_exist[4][4][3] >= 0,
+ gate_exist[4][4][3] <= 1,
+ gate_exist[5][0][0] >= 0,
+ gate_exist[5][0][0] <= 1,
+ gate_exist[5][0][1] >= 0,
+ gate_exist[5][0][1] <= 1,
+ gate_exist[5][0][2] >= 0,
+ gate_exist[5][0][2] <= 1,
+ gate_exist[5][0][3] >= 0,
+ gate_exist[5][0][3] <= 1,
+ gate_exist[5][1][0] >= 0,
+ ...]>
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+circuit name is Half_Adder
+primary input list
+--------------------
+a
+b
+
+int node list
+--------------------
+n1
+NOT
+--input--
+a
+--output--
+a2
+
+n2
+NOT
+--input--
+b
+--output--
+a1
+
+a1
+AND
+--input--
+a
+n2
+--output--
+node_to_s
+
+a2
+AND
+--input--
+b
+n1
+--output--
+node_to_s
+
+node_to_s
+AND
+--input--
+a1
+a2
+--output--
+s
+
+node_to_c
+AND
+--input--
+a
+b
+--output--
+c
+
+primary output list
+--------------------
+s
+c
+<bound method Solver.check of [gate_exist[2][0][0] >= 0,
+ gate_exist[2][0][0] <= 1,
+ gate_exist[2][0][1] >= 0,
+ gate_exist[2][0][1] <= 1,
+ gate_exist[2][0][2] >= 0,
+ gate_exist[2][0][2] <= 1,
+ gate_exist[2][0][3] >= 0,
+ gate_exist[2][0][3] <= 1,
+ gate_exist[2][1][0] >= 0,
+ gate_exist[2][1][0] <= 1,
+ gate_exist[2][1][1] >= 0,
+ gate_exist[2][1][1] <= 1,
+ gate_exist[2][1][2] >= 0,
+ gate_exist[2][1][2] <= 1,
+ gate_exist[2][1][3] >= 0,
+ gate_exist[2][1][3] <= 1,
+ gate_exist[2][2][0] >= 0,
+ gate_exist[2][2][0] <= 1,
+ gate_exist[2][2][1] >= 0,
+ gate_exist[2][2][1] <= 1,
+ gate_exist[2][2][2] >= 0,
+ gate_exist[2][2][2] <= 1,
+ gate_exist[2][2][3] >= 0,
+ gate_exist[2][2][3] <= 1,
+ gate_exist[2][3][0] >= 0,
+ gate_exist[2][3][0] <= 1,
+ gate_exist[2][3][1] >= 0,
+ gate_exist[2][3][1] <= 1,
+ gate_exist[2][3][2] >= 0,
+ gate_exist[2][3][2] <= 1,
+ gate_exist[2][3][3] >= 0,
+ gate_exist[2][3][3] <= 1,
+ gate_exist[2][4][0] >= 0,
+ gate_exist[2][4][0] <= 1,
+ gate_exist[2][4][1] >= 0,
+ gate_exist[2][4][1] <= 1,
+ gate_exist[2][4][2] >= 0,
+ gate_exist[2][4][2] <= 1,
+ gate_exist[2][4][3] >= 0,
+ gate_exist[2][4][3] <= 1,
+ gate_exist[3][0][0] >= 0,
+ gate_exist[3][0][0] <= 1,
+ gate_exist[3][0][1] >= 0,
+ gate_exist[3][0][1] <= 1,
+ gate_exist[3][0][2] >= 0,
+ gate_exist[3][0][2] <= 1,
+ gate_exist[3][0][3] >= 0,
+ gate_exist[3][0][3] <= 1,
+ gate_exist[3][1][0] >= 0,
+ gate_exist[3][1][0] <= 1,
+ gate_exist[3][1][1] >= 0,
+ gate_exist[3][1][1] <= 1,
+ gate_exist[3][1][2] >= 0,
+ gate_exist[3][1][2] <= 1,
+ gate_exist[3][1][3] >= 0,
+ gate_exist[3][1][3] <= 1,
+ gate_exist[3][2][0] >= 0,
+ gate_exist[3][2][0] <= 1,
+ gate_exist[3][2][1] >= 0,
+ gate_exist[3][2][1] <= 1,
+ gate_exist[3][2][2] >= 0,
+ gate_exist[3][2][2] <= 1,
+ gate_exist[3][2][3] >= 0,
+ gate_exist[3][2][3] <= 1,
+ gate_exist[3][3][0] >= 0,
+ gate_exist[3][3][0] <= 1,
+ gate_exist[3][3][1] >= 0,
+ gate_exist[3][3][1] <= 1,
+ gate_exist[3][3][2] >= 0,
+ gate_exist[3][3][2] <= 1,
+ gate_exist[3][3][3] >= 0,
+ gate_exist[3][3][3] <= 1,
+ gate_exist[3][4][0] >= 0,
+ gate_exist[3][4][0] <= 1,
+ gate_exist[3][4][1] >= 0,
+ gate_exist[3][4][1] <= 1,
+ gate_exist[3][4][2] >= 0,
+ gate_exist[3][4][2] <= 1,
+ gate_exist[3][4][3] >= 0,
+ gate_exist[3][4][3] <= 1,
+ gate_exist[4][0][0] >= 0,
+ gate_exist[4][0][0] <= 1,
+ gate_exist[4][0][1] >= 0,
+ gate_exist[4][0][1] <= 1,
+ gate_exist[4][0][2] >= 0,
+ gate_exist[4][0][2] <= 1,
+ gate_exist[4][0][3] >= 0,
+ gate_exist[4][0][3] <= 1,
+ gate_exist[4][1][0] >= 0,
+ gate_exist[4][1][0] <= 1,
+ gate_exist[4][1][1] >= 0,
+ gate_exist[4][1][1] <= 1,
+ gate_exist[4][1][2] >= 0,
+ gate_exist[4][1][2] <= 1,
+ gate_exist[4][1][3] >= 0,
+ gate_exist[4][1][3] <= 1,
+ gate_exist[4][2][0] >= 0,
+ gate_exist[4][2][0] <= 1,
+ gate_exist[4][2][1] >= 0,
+ gate_exist[4][2][1] <= 1,
+ gate_exist[4][2][2] >= 0,
+ gate_exist[4][2][2] <= 1,
+ gate_exist[4][2][3] >= 0,
+ gate_exist[4][2][3] <= 1,
+ gate_exist[4][3][0] >= 0,
+ gate_exist[4][3][0] <= 1,
+ gate_exist[4][3][1] >= 0,
+ gate_exist[4][3][1] <= 1,
+ gate_exist[4][3][2] >= 0,
+ gate_exist[4][3][2] <= 1,
+ gate_exist[4][3][3] >= 0,
+ gate_exist[4][3][3] <= 1,
+ gate_exist[4][4][0] >= 0,
+ gate_exist[4][4][0] <= 1,
+ gate_exist[4][4][1] >= 0,
+ gate_exist[4][4][1] <= 1,
+ gate_exist[4][4][2] >= 0,
+ gate_exist[4][4][2] <= 1,
+ gate_exist[4][4][3] >= 0,
+ gate_exist[4][4][3] <= 1,
+ gate_exist[5][0][0] >= 0,
+ gate_exist[5][0][0] <= 1,
+ gate_exist[5][0][1] >= 0,
+ gate_exist[5][0][1] <= 1,
+ gate_exist[5][0][2] >= 0,
+ gate_exist[5][0][2] <= 1,
+ gate_exist[5][0][3] >= 0,
+ gate_exist[5][0][3] <= 1,
+ gate_exist[5][1][0] >= 0,
+ ...]>
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+circuit name is Half_Adder
+primary input list
+--------------------
+a
+b
+
+int node list
+--------------------
+n1
+NOT
+--input--
+a
+--output--
+a2
+
+n2
+NOT
+--input--
+b
+--output--
+a1
+
+a1
+AND
+--input--
+a
+n2
+--output--
+node_to_s
+
+a2
+AND
+--input--
+b
+n1
+--output--
+node_to_s
+
+node_to_s
+AND
+--input--
+a1
+a2
+--output--
+s
+
+node_to_c
+AND
+--input--
+a
+b
+--output--
+c
+
+primary output list
+--------------------
+s
+c
+Traceback (most recent call last):
+  File "main.py", line 50, in <module>
+    main()
+  File "main.py", line 37, in main
+    s.add(0 <= gate_exist[i][j][k], gate_exist[i][j][k] <= 1)
+IndexError: list index out of range
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+circuit name is Half_Adder
+primary input list
+--------------------
+a
+b
+
+int node list
+--------------------
+n1
+NOT
+--input--
+a
+--output--
+a2
+
+n2
+NOT
+--input--
+b
+--output--
+a1
+
+a1
+AND
+--input--
+a
+n2
+--output--
+node_to_s
+
+a2
+AND
+--input--
+b
+n1
+--output--
+node_to_s
+
+node_to_s
+AND
+--input--
+a1
+a2
+--output--
+s
+
+node_to_c
+AND
+--input--
+a
+b
+--output--
+c
+
+primary output list
+--------------------
+s
+c
+Traceback (most recent call last):
+  File "main.py", line 61, in <module>
+    main()
+  File "main.py", line 54, in main
+    print("%d" % m[ gate_exist[i][j][k]].as_long(), end =="")
+NameError: name 'end' is not defined
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+circuit name is Half_Adder
+primary input list
+--------------------
+a
+b
+
+int node list
+--------------------
+n1
+NOT
+--input--
+a
+--output--
+a2
+
+n2
+NOT
+--input--
+b
+--output--
+a1
+
+a1
+AND
+--input--
+a
+n2
+--output--
+node_to_s
+
+a2
+AND
+--input--
+b
+n1
+--output--
+node_to_s
+
+node_to_s
+AND
+--input--
+a1
+a2
+--output--
+s
+
+node_to_c
+AND
+--input--
+a
+b
+--output--
+c
+
+primary output list
+--------------------
+s
+c
+1
+0
+0
+0
+
+0
+0
+0
+0
+
+0
+0
+0
+0
+
+0
+0
+0
+0
+
+0
+0
+0
+0
+
+
+
+1
+0
+0
+0
+
+0
+0
+0
+0
+
+0
+0
+0
+0
+
+0
+0
+0
+0
+
+0
+0
+0
+0
+
+
+
+1
+0
+0
+0
+
+0
+0
+0
+0
+
+0
+0
+0
+0
+
+0
+0
+0
+0
+
+0
+0
+0
+0
+
+
+
+1
+0
+0
+0
+
+0
+0
+0
+0
+
+0
+0
+0
+0
+
+0
+0
+0
+0
+
+0
+0
+0
+0
+
+
+
+1
+0
+0
+0
+
+0
+0
+0
+0
+
+0
+0
+0
+0
+
+0
+0
+0
+0
+
+0
+0
+0
+0
+
+
+
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+circuit name is Half_Adder
+primary input list
+--------------------
+a
+b
+
+int node list
+--------------------
+n1
+NOT
+--input--
+a
+--output--
+a2
+
+n2
+NOT
+--input--
+b
+--output--
+a1
+
+a1
+AND
+--input--
+a
+n2
+--output--
+node_to_s
+
+a2
+AND
+--input--
+b
+n1
+--output--
+node_to_s
+
+node_to_s
+AND
+--input--
+a1
+a2
+--output--
+s
+
+node_to_c
+AND
+--input--
+a
+b
+--output--
+c
+
+primary output list
+--------------------
+s
+c
+unsat
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+circuit name is Half_Adder
+primary input list
+--------------------
+a
+b
+
+int node list
+--------------------
+n1
+NOT
+--input--
+a
+--output--
+a2
+
+n2
+NOT
+--input--
+b
+--output--
+a1
+
+a1
+AND
+--input--
+a
+n2
+--output--
+node_to_s
+
+a2
+AND
+--input--
+b
+n1
+--output--
+node_to_s
+
+node_to_s
+AND
+--input--
+a1
+a2
+--output--
+s
+
+node_to_c
+AND
+--input--
+a
+b
+--output--
+c
+
+primary output list
+--------------------
+s
+c
+unsat
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+circuit name is Half_Adder
+primary input list
+--------------------
+a
+b
+
+int node list
+--------------------
+n1
+NOT
+--input--
+a
+--output--
+a2
+
+n2
+NOT
+--input--
+b
+--output--
+a1
+
+a1
+AND
+--input--
+a
+n2
+--output--
+node_to_s
+
+a2
+AND
+--input--
+b
+n1
+--output--
+node_to_s
+
+node_to_s
+AND
+--input--
+a1
+a2
+--output--
+s
+
+node_to_c
+AND
+--input--
+a
+b
+--output--
+c
+
+primary output list
+--------------------
+s
+c
+gate[1] is :
+1000
+0000
+0000
+0000
+0000
+
+gate[2] is :
+1000
+0000
+0000
+0000
+0000
+
+gate[3] is :
+1000
+0000
+0000
+0000
+0000
+
+gate[4] is :
+1000
+0000
+0000
+0000
+0000
+
+gate[5] is :
+1000
+0000
+0000
+0000
+0000
+
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+circuit name is Half_Adder
+primary input list
+--------------------
+a
+b
+
+int node list
+--------------------
+n1
+NOT
+--input--
+a
+--output--
+a2
+
+n2
+NOT
+--input--
+b
+--output--
+a1
+
+a1
+AND
+--input--
+a
+n2
+--output--
+node_to_s
+
+a2
+AND
+--input--
+b
+n1
+--output--
+node_to_s
+
+node_to_s
+AND
+--input--
+a1
+a2
+--output--
+s
+
+node_to_c
+AND
+--input--
+a
+b
+--output--
+c
+
+primary output list
+--------------------
+s
+c
+unsat
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+unsat
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+gate[1] is :
+0010
+0000
+0000
+0000
+0000
+
+gate[2] is :
+0100
+0000
+0000
+0000
+0000
+
+gate[3] is :
+1000
+0000
+0000
+0000
+0000
+
+gate[4] is :
+0001
+0000
+0000
+0000
+0000
+
+gate[5] is :
+1000
+0000
+0000
+0000
+0000
+
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+unsat
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+unsat
+~/work/prog/QCA/workspace/main $ ]
+]: command not found
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+unsat
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+1
+2
+3
+4
+5
+1
+2
+3
+4
+5
+1
+2
+3
+4
+5
+1
+2
+3
+4
+5
+1
+2
+3
+4
+5
+1
+2
+3
+4
+5
+1
+2
+3
+4
+5
+1
+2
+3
+4
+5
+1
+2
+3
+4
+5
+1
+2
+3
+4
+5
+1
+2
+3
+4
+5
+1
+2
+3
+4
+5
+1
+2
+3
+4
+5
+1
+2
+3
+4
+5
+1
+2
+3
+4
+5
+1
+2
+3
+4
+5
+1
+2
+3
+4
+5
+1
+2
+3
+4
+5
+1
+2
+3
+4
+5
+1
+2
+3
+4
+5
+unsat
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+gate_exist[1][0][0]
+gate_exist[2][0][0]
+gate_exist[3][0][0]
+gate_exist[4][0][0]
+gate_exist[5][0][0]
+gate_exist[1][1][0]
+gate_exist[2][1][0]
+gate_exist[3][1][0]
+gate_exist[4][1][0]
+gate_exist[5][1][0]
+gate_exist[1][2][0]
+gate_exist[2][2][0]
+gate_exist[3][2][0]
+gate_exist[4][2][0]
+gate_exist[5][2][0]
+gate_exist[1][3][0]
+gate_exist[2][3][0]
+gate_exist[3][3][0]
+gate_exist[4][3][0]
+gate_exist[5][3][0]
+gate_exist[1][4][0]
+gate_exist[2][4][0]
+gate_exist[3][4][0]
+gate_exist[4][4][0]
+gate_exist[5][4][0]
+gate_exist[1][0][1]
+gate_exist[2][0][1]
+gate_exist[3][0][1]
+gate_exist[4][0][1]
+gate_exist[5][0][1]
+gate_exist[1][1][1]
+gate_exist[2][1][1]
+gate_exist[3][1][1]
+gate_exist[4][1][1]
+gate_exist[5][1][1]
+gate_exist[1][2][1]
+gate_exist[2][2][1]
+gate_exist[3][2][1]
+gate_exist[4][2][1]
+gate_exist[5][2][1]
+gate_exist[1][3][1]
+gate_exist[2][3][1]
+gate_exist[3][3][1]
+gate_exist[4][3][1]
+gate_exist[5][3][1]
+gate_exist[1][4][1]
+gate_exist[2][4][1]
+gate_exist[3][4][1]
+gate_exist[4][4][1]
+gate_exist[5][4][1]
+gate_exist[1][0][2]
+gate_exist[2][0][2]
+gate_exist[3][0][2]
+gate_exist[4][0][2]
+gate_exist[5][0][2]
+gate_exist[1][1][2]
+gate_exist[2][1][2]
+gate_exist[3][1][2]
+gate_exist[4][1][2]
+gate_exist[5][1][2]
+gate_exist[1][2][2]
+gate_exist[2][2][2]
+gate_exist[3][2][2]
+gate_exist[4][2][2]
+gate_exist[5][2][2]
+gate_exist[1][3][2]
+gate_exist[2][3][2]
+gate_exist[3][3][2]
+gate_exist[4][3][2]
+gate_exist[5][3][2]
+gate_exist[1][4][2]
+gate_exist[2][4][2]
+gate_exist[3][4][2]
+gate_exist[4][4][2]
+gate_exist[5][4][2]
+gate_exist[1][0][3]
+gate_exist[2][0][3]
+gate_exist[3][0][3]
+gate_exist[4][0][3]
+gate_exist[5][0][3]
+gate_exist[1][1][3]
+gate_exist[2][1][3]
+gate_exist[3][1][3]
+gate_exist[4][1][3]
+gate_exist[5][1][3]
+gate_exist[1][2][3]
+gate_exist[2][2][3]
+gate_exist[3][2][3]
+gate_exist[4][2][3]
+gate_exist[5][2][3]
+gate_exist[1][3][3]
+gate_exist[2][3][3]
+gate_exist[3][3][3]
+gate_exist[4][3][3]
+gate_exist[5][3][3]
+gate_exist[1][4][3]
+gate_exist[2][4][3]
+gate_exist[3][4][3]
+gate_exist[4][4][3]
+gate_exist[5][4][3]
+unsat
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+gate_exist[1][0][0]
+gate_exist[2][0][0]
+gate_exist[3][0][0]
+gate_exist[4][0][0]
+gate_exist[5][0][0]
+
+gate_exist[1][1][0]
+gate_exist[2][1][0]
+gate_exist[3][1][0]
+gate_exist[4][1][0]
+gate_exist[5][1][0]
+
+gate_exist[1][2][0]
+gate_exist[2][2][0]
+gate_exist[3][2][0]
+gate_exist[4][2][0]
+gate_exist[5][2][0]
+
+gate_exist[1][3][0]
+gate_exist[2][3][0]
+gate_exist[3][3][0]
+gate_exist[4][3][0]
+gate_exist[5][3][0]
+
+gate_exist[1][4][0]
+gate_exist[2][4][0]
+gate_exist[3][4][0]
+gate_exist[4][4][0]
+gate_exist[5][4][0]
+
+gate_exist[1][0][1]
+gate_exist[2][0][1]
+gate_exist[3][0][1]
+gate_exist[4][0][1]
+gate_exist[5][0][1]
+
+gate_exist[1][1][1]
+gate_exist[2][1][1]
+gate_exist[3][1][1]
+gate_exist[4][1][1]
+gate_exist[5][1][1]
+
+gate_exist[1][2][1]
+gate_exist[2][2][1]
+gate_exist[3][2][1]
+gate_exist[4][2][1]
+gate_exist[5][2][1]
+
+gate_exist[1][3][1]
+gate_exist[2][3][1]
+gate_exist[3][3][1]
+gate_exist[4][3][1]
+gate_exist[5][3][1]
+
+gate_exist[1][4][1]
+gate_exist[2][4][1]
+gate_exist[3][4][1]
+gate_exist[4][4][1]
+gate_exist[5][4][1]
+
+gate_exist[1][0][2]
+gate_exist[2][0][2]
+gate_exist[3][0][2]
+gate_exist[4][0][2]
+gate_exist[5][0][2]
+
+gate_exist[1][1][2]
+gate_exist[2][1][2]
+gate_exist[3][1][2]
+gate_exist[4][1][2]
+gate_exist[5][1][2]
+
+gate_exist[1][2][2]
+gate_exist[2][2][2]
+gate_exist[3][2][2]
+gate_exist[4][2][2]
+gate_exist[5][2][2]
+
+gate_exist[1][3][2]
+gate_exist[2][3][2]
+gate_exist[3][3][2]
+gate_exist[4][3][2]
+gate_exist[5][3][2]
+
+gate_exist[1][4][2]
+gate_exist[2][4][2]
+gate_exist[3][4][2]
+gate_exist[4][4][2]
+gate_exist[5][4][2]
+
+gate_exist[1][0][3]
+gate_exist[2][0][3]
+gate_exist[3][0][3]
+gate_exist[4][0][3]
+gate_exist[5][0][3]
+
+gate_exist[1][1][3]
+gate_exist[2][1][3]
+gate_exist[3][1][3]
+gate_exist[4][1][3]
+gate_exist[5][1][3]
+
+gate_exist[1][2][3]
+gate_exist[2][2][3]
+gate_exist[3][2][3]
+gate_exist[4][2][3]
+gate_exist[5][2][3]
+
+gate_exist[1][3][3]
+gate_exist[2][3][3]
+gate_exist[3][3][3]
+gate_exist[4][3][3]
+gate_exist[5][3][3]
+
+gate_exist[1][4][3]
+gate_exist[2][4][3]
+gate_exist[3][4][3]
+gate_exist[4][4][3]
+gate_exist[5][4][3]
+
+unsat
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+gate_exist[1][0][0]
+gate_exist[2][0][0]
+gate_exist[3][0][0]
+gate_exist[4][0][0]
+gate_exist[5][0][0]
+
+gate_exist[1][1][0]
+gate_exist[2][1][0]
+gate_exist[3][1][0]
+gate_exist[4][1][0]
+gate_exist[5][1][0]
+
+gate_exist[1][2][0]
+gate_exist[2][2][0]
+gate_exist[3][2][0]
+gate_exist[4][2][0]
+gate_exist[5][2][0]
+
+gate_exist[1][3][0]
+gate_exist[2][3][0]
+gate_exist[3][3][0]
+gate_exist[4][3][0]
+gate_exist[5][3][0]
+
+gate_exist[1][4][0]
+gate_exist[2][4][0]
+gate_exist[3][4][0]
+gate_exist[4][4][0]
+gate_exist[5][4][0]
+
+gate_exist[1][0][1]
+gate_exist[2][0][1]
+gate_exist[3][0][1]
+gate_exist[4][0][1]
+gate_exist[5][0][1]
+
+gate_exist[1][1][1]
+gate_exist[2][1][1]
+gate_exist[3][1][1]
+gate_exist[4][1][1]
+gate_exist[5][1][1]
+
+gate_exist[1][2][1]
+gate_exist[2][2][1]
+gate_exist[3][2][1]
+gate_exist[4][2][1]
+gate_exist[5][2][1]
+
+gate_exist[1][3][1]
+gate_exist[2][3][1]
+gate_exist[3][3][1]
+gate_exist[4][3][1]
+gate_exist[5][3][1]
+
+gate_exist[1][4][1]
+gate_exist[2][4][1]
+gate_exist[3][4][1]
+gate_exist[4][4][1]
+gate_exist[5][4][1]
+
+gate_exist[1][0][2]
+gate_exist[2][0][2]
+gate_exist[3][0][2]
+gate_exist[4][0][2]
+gate_exist[5][0][2]
+
+gate_exist[1][1][2]
+gate_exist[2][1][2]
+gate_exist[3][1][2]
+gate_exist[4][1][2]
+gate_exist[5][1][2]
+
+gate_exist[1][2][2]
+gate_exist[2][2][2]
+gate_exist[3][2][2]
+gate_exist[4][2][2]
+gate_exist[5][2][2]
+
+gate_exist[1][3][2]
+gate_exist[2][3][2]
+gate_exist[3][3][2]
+gate_exist[4][3][2]
+gate_exist[5][3][2]
+
+gate_exist[1][4][2]
+gate_exist[2][4][2]
+gate_exist[3][4][2]
+gate_exist[4][4][2]
+gate_exist[5][4][2]
+
+gate_exist[1][0][3]
+gate_exist[2][0][3]
+gate_exist[3][0][3]
+gate_exist[4][0][3]
+gate_exist[5][0][3]
+
+gate_exist[1][1][3]
+gate_exist[2][1][3]
+gate_exist[3][1][3]
+gate_exist[4][1][3]
+gate_exist[5][1][3]
+
+gate_exist[1][2][3]
+gate_exist[2][2][3]
+gate_exist[3][2][3]
+gate_exist[4][2][3]
+gate_exist[5][2][3]
+
+gate_exist[1][3][3]
+gate_exist[2][3][3]
+gate_exist[3][3][3]
+gate_exist[4][3][3]
+gate_exist[5][3][3]
+
+gate_exist[1][4][3]
+gate_exist[2][4][3]
+gate_exist[3][4][3]
+gate_exist[4][4][3]
+gate_exist[5][4][3]
+
+gate[1] is :
+1000
+0000
+0000
+0000
+0000
+
+gate[2] is :
+0000
+0000
+0000
+0000
+0001
+
+gate[3] is :
+0000
+0001
+0000
+0000
+0000
+
+gate[4] is :
+0000
+0000
+0000
+0001
+0000
+
+gate[5] is :
+0000
+0000
+0000
+0000
+0010
+
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Traceback (most recent call last):
+  File "main.py", line 71, in <module>
+    main()
+  File "main.py", line 63, in main
+    frg = m[gate_exist[i][j][k].as_long()]
+AttributeError: 'ArithRef' object has no attribute 'as_long'
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Traceback (most recent call last):
+  File "main.py", line 71, in <module>
+    main()
+  File "main.py", line 63, in main
+    frg = Int(m[gate_exist[i][j][k].as_long()])
+AttributeError: 'ArithRef' object has no attribute 'as_long'
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+3
+0
+0
+
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+4
+0
+
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+5
+0
+2
+0
+0
+0
+
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+3
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+4
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+5
+0
+2
+0
+0
+0
+
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1000000000000000000000000000000000000300000000000000000000000000000000000000004000000000000000502000
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+10000000000000000000
+00000000000000000300
+00000000000000000000
+00000000000000000040
+00000000000000502000
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+10000
+00000
+00000
+00000
+00000
+00000
+00000
+00300
+00000
+00000
+00000
+00000
+00000
+00000
+00000
+00040
+00000
+00000
+00005
+02000
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+10000
+00000
+00000
+00000
+
+00000
+00000
+00000
+00300
+
+00000
+00000
+00000
+00000
+
+00000
+00000
+00000
+00040
+
+00000
+00000
+00005
+02000
+
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1000
+0003
+0000
+0004
+0052
+
+~/work/prog/QCA/workspace/main $ 
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+13042~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+13042
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+11110003000000040052
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+13042~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1111
+0003
+0000
+0004
+0052
+~/work/prog/QCA/workspace/main $ python3 main.py ../b_mark/halh_adder.blif 
+1111
+0003
+0000
+0004
+0052
+~/work/prog/QCA/workspace/main $ 
+~/work/prog/QCA/workspace/main $ 
+~/work/prog/QCA/workspace/main $ 
+~/work/prog/QCA/workspace/main $ 
+~/work/prog/QCA/workspace/main $ 
+~/work/prog/QCA/workspace/main $ git add main.py 
+~/work/prog/QCA/workspace/main $ git commit -m "first restrict"
+[master 453360c] first restrict
+ 1 file changed, 53 insertions(+), 3 deletions(-)
+~/work/prog/QCA/workspace/main $ git push origin master
+Counting objects: 5, done.
+Compressing objects: 100% (5/5), done.
+Writing objects: 100% (5/5), 1.17 KiB | 170.00 KiB/s, done.
+Total 5 (delta 3), reused 0 (delta 0)
+remote: Resolving deltas: 100% (3/3), completed with 3 local objects.
+To github.com:tomorine/QCA.git
+   3a79761..453360c  master -> master
+~/work/prog/QCA/workspace/main $ ls
+__pycache__  circ.py  main.py  output  z3_test.py
+~/work/prog/QCA/workspace/main $ 
