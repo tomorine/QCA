@@ -89,6 +89,11 @@ def main():
                     s.add(If(op_exist[i][j][k]==1, Sum([tmp for tmp in tmplist])==len(node.input), op_exist[i][j][k]==0))
                     s.add(If(wire_exist[tmp][j][k]==1, Sum([tmp for tmp in tmplist])>=2, wire_exist[tmp][j][k]==0))
 
+    # wire has no roop
+    for j in range(wd):
+        for k in range(hi):
+            for i in range(circ.op_num):
+                
     # print model or unsat           
     r = s.check()
     if r == sat:

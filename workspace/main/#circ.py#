@@ -26,7 +26,7 @@ class Create_Node:
     # ゲート番号の定義
     def def_opnum(self,op_num):
         self.id = op_num-1
-        
+
 # ネットワークのクラス
 class Create_Network:
     def __init__(self,name):
@@ -79,13 +79,13 @@ class Create_Network:
     def find_node_id(self,id):
         for node in self.intnode:
             if node.id == id:
-                return id
+                return node
         for node in self.p_input:
             if node.id == id:
-                return id
+                return node
         for node in self.p_output:
             if node.id == id:
-                return id
+                return node
         return (-1)
 
     

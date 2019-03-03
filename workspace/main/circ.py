@@ -79,14 +79,16 @@ class Create_Network:
     def find_node_id(self,id):
         for node in self.intnode:
             if node.id == id:
-                return id
+                return node
         for node in self.p_input:
             if node.id == id:
-                return id
+                return node
         for node in self.p_output:
             if node.id == id:
-                return id
+                return node
         return (-1)
+
+    
 # ネットワークの中身をプリントする関数        
 class Print_Network:
     @classmethod
@@ -102,11 +104,11 @@ class Print_Network:
             print("gatetype : %s" % node.gatetype)
             print("input : ",end='')
             for tmp in node.input:
-                print("%s " % tmp.name,end ='')
+                print("%s:%d " % (tmp.name,tmp.id),end ='')
             print()
             print("output : ",end='')
             for tmp in node.output:
-                print("%s " % tmp.name,end='')
+                print("%s:%d " % (tmp.name,tmp.id),end='')
             print("\n")
         print("primary output list\n--------------------")  # print output
         for node in circ.p_output:
@@ -151,6 +153,7 @@ class Make_Network:
                     tmp = Create_Node("node_to_"+node.name)
                     tmp.add_output(node)
                     circ.add_intnode(tmp)
+                    node.input.append(tmp)
                     node = tmp
                 for tmp in data:
                     tmp_node = circ.find_node(tmp)
