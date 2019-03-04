@@ -23,8 +23,9 @@ def main():
 
     # 制約式の追加
     # test case in 4*4 clock zones
+    else_tmp = Int("else_tmp")
     hi = 5 # circuit high
-    wd = 5 # circuit wide
+    wd = 6 # circuit wide
     s = Solver()
     
     # op_exist is int variable : op_exist[op_id][wide][high]
@@ -89,14 +90,40 @@ def main():
                     s.add(If(op_exist[i][j][k]==1, Sum([tmp for tmp in tmplist])==len(node.input), op_exist[i][j][k]==0))
                     s.add(If(wire_exist[tmp][j][k]==1, Sum([tmp for tmp in tmplist])>=2, wire_exist[tmp][j][k]==0))
 
+    # wire has no roop
+    path = [[[[[Int("path[%d][%d][%d][%d][%d]" % (m,l,k,j,i)) for i in range(hi)] for j in range(wd)] for k in range(hi)] for l in range(wd)] for m in range(circ.op_num)]
+    for i in range(wd):
+        for j in range(hi):
+            for ir in range(wd):
+                for jr in range(hi):
+                    for node in range(circ.op_num):
+                        s.add(path[node][i][j][ir][jr]>=0, path[node][i][j][ir][jr]<=1)
+    for i in range(circ.op_num):
+        input = circ.find_node_id(i).input
+        for node in input:
+            for j in range(wd):
+                for k in range(hi):
+                    if j<wd-1:
+                        s.add(If(And(op_exist[i][j][k]==1, wire_exist[node.id][j+1][k]==1), path[node.id][j+1][k][j][k]==1,else_tmp==0))
+                        s.add(If(And(op_exist[i][j][k]==1, op_exist[node.id][j+1][k]==1), path[node.id][j+1][k][j][k]==1,else_tmp==0))
+                    if j>0:
+                        s.add(If(And(op_exist[i][j][k]==1, wire_exist[node.id][j-1][k]==1), path[node.id][j-1][k][j][k]==1,else_tmp==0))
+                        s.add(If(And(op_exist[i][j][k]==1, op_exist[node.id][j-1][k]==1), path[node.id][j-1][k][j][k]==1,else_tmp==0))
+                    if k<hi-1:
+                        s.add(If(And(op_exist[i][j][k]==1,wire_exist[node.id][j][k+1]==1), path[node.id][j][k+1][j][k]==1,else_tmp==0))
+                        s.add(If(And(op_exist[i][j][k]==1,op_exist[node.id][j][k+1]==1), path[node.id][j][k+1][j][k]==1,else_tmp==0))
+                    if k>0:
+                        s.add(If(And(op_exist[i][j][k]==1, wire_exist[node.id][j][k-1]==1), path[node.id][j][k-1][j][k]==1,else_tmp==0))
+                        s.add(If(And(op_exist[i][j][k]==1, op_exist[node.id][j][k-1]==1), path[node.id][j][k-1][j][k]==1,else_tmp==0))
+    
     # print model or unsat           
     r = s.check()
     if r == sat:
         m = s.model()
         print("oprater")
-        for j in range(wd):
+        for k in range(hi):
             frg = '*'
-            for k in range(hi):
+            for j in range(wd):
                 for i in range(circ.op_num):
                     if m[op_exist[i][j][k]].as_long() != 0:
                         frg = i
@@ -104,9 +131,9 @@ def main():
                 frg = '*'
             print()
         print("\nwire")
-        for j in range(wd):
+        for k in range(hi):
             frg = '*'
-            for k in range(hi):
+            for j in range(wd):
                 for i in range(circ.op_num):
                     if m[wire_exist[i][j][k]].as_long() !=0:
                         frg = i
@@ -114,10 +141,32 @@ def main():
                 frg = '*'
             print()
         print("\nclock_zone")
-        for i in range(wd):
-            for j in range(hi):
+        for j in range(hi):
+            for i in range(wd):
                 print (" [%d] " % m[clock_zone[i][j]].as_long(), end='')
             print()
+        for node in range(circ.op_num):
+            print(node)
+            for j in range(hi):
+                for i in range(wd):
+                    print("[ ]",end='')
+                    if i<wd-1 and  m[path[node][i][j][i+1][j]].as_long()!=0:
+                        print(">",end='')
+                    elif i<wd-1 and m[path[node][i+1][j][i][j]].as_long()!=0:
+                        print("<",end='')
+                    else:
+                        print(" ",end='')
+                print()
+                for i in range(wd):
+                    if j<hi-1 and m[path[node][i][j][i][j+1]].as_long()!=0:
+                        print(" V  ",end='')
+                    elif j<hi-1 and m[path[node][i][j+1][i][j]].as_long()!=0:
+                        print(" A  ",end='')
+                    else:
+                        print("    ",end='')
+                print()
+            print()
+            
     else:
         print(r)
        
