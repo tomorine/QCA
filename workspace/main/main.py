@@ -63,10 +63,12 @@ def main():
             s.add(Sum([tmp for tmp in tmplist]) <= 1)
 
     # adjacent clock zone has different number
-    for i in range(wd-1):
-        for j in range(hi-1):
-            s.add(clock_zone[i][j]!=clock_zone[i+1][j])
-            s.add(clock_zone[i][j]!=clock_zone[i][j+1])
+    for i in range(wd):
+        for j in range(hi):
+            if i<wd-1:
+                s.add(clock_zone[i][j]!=clock_zone[i+1][j])
+            if j<hi-1:
+                s.add(clock_zone[i][j]!=clock_zone[i][j+1])
 
     # operater has adjacent wire or operater
     for j in range(wd):
@@ -100,7 +102,7 @@ def main():
                     s.add(If(op_exist[i][j][k]==1, Sum([sum_ for sum_ in sumlist])==len(node.input), op_exist[i][j][k]==0))
                     
 
-    # wire has no roop
+    # wire has no roop 
     # 0 <= path <= 1 
     for i in range(wd):
         for j in range(hi):
@@ -109,7 +111,8 @@ def main():
                     for node in range(circ.op_num):
                         for tonode in range(circ.op_num):
                             s.add(path[node][tonode][i][j][ir][jr]>=0, path[node][tonode][i][j][ir][jr]<=1)
-                        
+
+    # setting path on oparater or wire 
     for i in range(circ.op_num):
         input = circ.find_node_id(i).input
         for node in input:
@@ -117,17 +120,24 @@ def main():
                 for k in range(hi):
                     # 右方向
                     if j<wd-1:
-                        s.add(If(Or(And(op_exist[i][j][k]==1, wire_exist[node.id][j+1][k]==1),And(op_exist[i][j][k]==1, op_exist[node.id][j+1][k]==1)), path[node.id][i][j+1][k][j][k]==1,path[node.id][i][j+1][k][j][k]==0))
+                        s.add(If(Or(And(op_exist[i][j][k]==1, wire_exist[node.id][j+1][k]==1),And(op_exist[i][j][k]==1, op_exist[node.id][j+1][k]==1)), path[node.id][i][j+1][k][j][k]==1, path[node.id][i][j+1][k][j][k]==0))
+                        s.add(If(path[node.id][i][j+1][k][j][k]==1, Or(wire_exist[node.id][j+1][k]==1, op_exist[node.id][j+1][k]==1), path[node.id][i][j+1][k][j][k]==0))
                     # 左方向
                     if j>0:
                         s.add(If(Or(And(op_exist[i][j][k]==1, wire_exist[node.id][j-1][k]==1),And(op_exist[i][j][k]==1, op_exist[node.id][j-1][k]==1)), path[node.id][i][j-1][k][j][k]==1, path[node.id][i][j-1][k][j][k]==0))
+                        s.add(If(path[node.id][i][j-1][k][j][k]==1, Or(wire_exist[node.id][j-1][k]==1, op_exist[node.id][j-1][k]==1), path[node.id][i][j-1][k][j][k]==0))
                     # 下方向
                     if k<hi-1:
                         s.add(If(Or(And(op_exist[i][j][k]==1, wire_exist[node.id][j][k+1]==1),And(op_exist[i][j][k]==1, op_exist[node.id][j][k+1]==1)), path[node.id][i][j][k+1][j][k]==1, path[node.id][i][j][k+1][j][k]==0))
+                        s.add(If(path[node.id][i][j][k+1][j][k]==1, Or(wire_exist[node.id][j][k+1]==1, op_exist[node.id][j][k+1]==1), path[node.id][i][j][k+1][j][k]==0))
                     # 上方向    
                     if k>0:
                         s.add(If(Or(And(op_exist[i][j][k]==1, wire_exist[node.id][j][k-1]==1),And(op_exist[i][j][k]==1, op_exist[node.id][j][k-1]==1)), path[node.id][i][j][k-1][j][k]==1, path[node.id][i][j][k-1][j][k]==0))
-    # print model or unsat           
+                        s.add(If(path[node.id][i][j][k-1][j][k]==1, Or(wire_exist[node.id][j][k-1]==1, op_exist[node.id][j][k-1]==1), path[node.id][i][j][k-1][j][k]==0))
+                     
+                     
+                        
+    # print model or
     r = s.check()
     if r == sat:
         m = s.model()
