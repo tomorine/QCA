@@ -22,7 +22,6 @@ def main():
     Print_Network.node_inf(circ)
 
     # 制約式の追加
-    else_tmp = Int("else_tmp") #else_tmpはz3がif文を使用する際にelseの入力がないことを許可しなかったのでできた変数.基本的に意味はない.できれば消したい
     hi = 5 # circuit high
     wd = 6 # circuit wide
     s = Solver()
@@ -104,15 +103,19 @@ def main():
 
     # wire has no roop 
     # 0 <= path <= 1 
-    for i in range(wd):
-        for j in range(hi):
-            for ir in range(wd):
-                for jr in range(hi):
-                    for node in range(circ.op_num):
-                        for tonode in range(circ.op_num):
+    for node in range(circ.op_num):
+        for tonode in range(circ.op_num):
+            tmplist = []
+            for i in range(wd):
+                for j in range(hi):
+                    # todo : 双方向のpathがないように制約する
+                    for ir in range(wd):
+                        for jr in range(hi):
                             s.add(path[node][tonode][i][j][ir][jr]>=0, path[node][tonode][i][j][ir][jr]<=1)
+                            
 
-    # setting path on oparater or wire 
+    # setting path on oparater or wire
+    # wireとoperaterが隣接していないクロックゾーンのpathを0にする方がきれいかも
     for i in range(circ.op_num):
         input = circ.find_node_id(i).input
         for node in input:
@@ -120,23 +123,27 @@ def main():
                 for k in range(hi):
                     # 右方向
                     if j<wd-1:
-                        s.add(If(Or(And(op_exist[i][j][k]==1, wire_exist[node.id][j+1][k]==1),And(op_exist[i][j][k]==1, op_exist[node.id][j+1][k]==1)), path[node.id][i][j+1][k][j][k]==1, path[node.id][i][j+1][k][j][k]==0))
+                        # もしoparaterやwireが隣接するクロックゾーンに存在するならデータフローに従ってpathを定義する
+                        s.add(Implies(Or(And(op_exist[i][j][k]==1, wire_exist[node.id][j+1][k]==1),And(op_exist[i][j][k]==1, op_exist[node.id][j+1][k]==1)), path[node.id][i][j+1][k][j][k]==1, path[node.id][i][j+1][k][j][k]==0))
+                        s.add(Implies(And(wire_exist[i][j][k]==1, wire_exist[node.id][j+1][k]==1), path[node.id][i][j+1][k][j][k]==1, path[node.id][i][j+1][k][j][k]==0))
                         s.add(If(path[node.id][i][j+1][k][j][k]==1, Or(wire_exist[node.id][j+1][k]==1, op_exist[node.id][j+1][k]==1), path[node.id][i][j+1][k][j][k]==0))
                     # 左方向
                     if j>0:
-                        s.add(If(Or(And(op_exist[i][j][k]==1, wire_exist[node.id][j-1][k]==1),And(op_exist[i][j][k]==1, op_exist[node.id][j-1][k]==1)), path[node.id][i][j-1][k][j][k]==1, path[node.id][i][j-1][k][j][k]==0))
+                        s.add(Implies(Or(And(op_exist[i][j][k]==1, wire_exist[node.id][j-1][k]==1),And(op_exist[i][j][k]==1, op_exist[node.id][j-1][k]==1)), path[node.id][i][j-1][k][j][k]==1, path[node.id][i][j-1][k][j][k]==0))
+                        s.add(Implies(And(wire_exist[i][j][k]==1, wire_exist[node.id][j-1][k]==1), path[node.id][i][j-1][k][j][k]==1, path[node.id][i][j-1][k][j][k]==0))
                         s.add(If(path[node.id][i][j-1][k][j][k]==1, Or(wire_exist[node.id][j-1][k]==1, op_exist[node.id][j-1][k]==1), path[node.id][i][j-1][k][j][k]==0))
                     # 下方向
                     if k<hi-1:
-                        s.add(If(Or(And(op_exist[i][j][k]==1, wire_exist[node.id][j][k+1]==1),And(op_exist[i][j][k]==1, op_exist[node.id][j][k+1]==1)), path[node.id][i][j][k+1][j][k]==1, path[node.id][i][j][k+1][j][k]==0))
+                        s.add(Implies(Or(And(op_exist[i][j][k]==1, wire_exist[node.id][j][k+1]==1),And(op_exist[i][j][k]==1, op_exist[node.id][j][k+1]==1)), path[node.id][i][j][k+1][j][k]==1, path[node.id][i][j][k+1][j][k]==0))
+                        s.add(Implies(And(wire_exist[i][j][k]==1, wire_exist[node.id][j][k+1]==1), path[node.id][i][j][k+1][j][k]==1, path[node.id][i][j][k+1][j][k]==0))
                         s.add(If(path[node.id][i][j][k+1][j][k]==1, Or(wire_exist[node.id][j][k+1]==1, op_exist[node.id][j][k+1]==1), path[node.id][i][j][k+1][j][k]==0))
                     # 上方向    
                     if k>0:
-                        s.add(If(Or(And(op_exist[i][j][k]==1, wire_exist[node.id][j][k-1]==1),And(op_exist[i][j][k]==1, op_exist[node.id][j][k-1]==1)), path[node.id][i][j][k-1][j][k]==1, path[node.id][i][j][k-1][j][k]==0))
+                        s.add(Implies(Or(And(op_exist[i][j][k]==1, wire_exist[node.id][j][k-1]==1),And(op_exist[i][j][k]==1, op_exist[node.id][j][k-1]==1)), path[node.id][i][j][k-1][j][k]==1, path[node.id][i][j][k-1][j][k]==0))
+                        s.add(Implies(And(wire_exist[i][j][k]==1, wire_exist[node.id][j][k-1]==1), path[node.id][i][j][k][j][k-1]==1, path[node.id][i][j][k][j][k-1]==0))
                         s.add(If(path[node.id][i][j][k-1][j][k]==1, Or(wire_exist[node.id][j][k-1]==1, op_exist[node.id][j][k-1]==1), path[node.id][i][j][k-1][j][k]==0))
-                     
-                     
-                        
+                    s.add(path[node.id][i][j][k][j][k]==0)
+                    
     # print model or
     r = s.check()
     if r == sat:
