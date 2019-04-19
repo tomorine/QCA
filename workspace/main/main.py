@@ -33,7 +33,7 @@ def main():
     op_exist = [[[Int("op_exist[%d][%d][%d]" % (k,j,i)) for i in range(hi)] for j in range(wd)]for k in range(circ.op_num)]
     wire_exist = [[[Int("wire_exist[%d][%d][%d]" % (k,j,i)) for i in range(hi)] for j in range(wd)] for k in range(circ.op_num)]
     clock_zone = [[Int("clock_zone[%d][%d]" % (j,i)) for i in range(hi)] for j in range(wd)]
-    path = [[[[[[Int("path[%d][%d][%d][%d][%d][%d]" % (n,m,l,k,j,i)) for i in range(hi)] for j in range(wd)] for k in range(hi)] for l in range(wd)] for m in range(circ.op_num)]for n in range(circ.op_num)]
+    path = [[[[Int("path[%d][%d][%d][%d]" % (l,k,j,i)) for i in range(hi)] for j in range(wd)] for k in range(hi)] for l in range(wd)]
     
     # 0 <= op_exist,wire_exist <= 1
     # 1 <= clock_zone <= 4
@@ -103,47 +103,36 @@ def main():
 
     # wire has no roop 
     # 0 <= path <= 1 
-    for node in range(circ.op_num):
-        for tonode in range(circ.op_num):
-            tmplist = []
-            for i in range(wd):
-                for j in range(hi):
-                    # todo : 双方向のpathがないように制約する
-                    for ir in range(wd):
-                        for jr in range(hi):
-                            s.add(path[node][tonode][i][j][ir][jr]>=0, path[node][tonode][i][j][ir][jr]<=1)
-                            
-
+    for i in range(wd):
+        for j in range(hi):
+            for ir in range(wd):
+                for jr in range(hi):
+                    s.add(path[i][j][ir][jr]>=0, path[i][j][ir][jr]<=1)
+                    
     # setting path on oparater or wire
     # wireとoperaterが隣接していないクロックゾーンのpathを0にする方がきれいかも
-    for i in range(circ.op_num):
-        input = circ.find_node_id(i).input
+    for tonode in range(circ.op_num):
+        input = circ.find_node_id(tonode).input
         for node in input:
-            for j in range(wd):
-                for k in range(hi):
+            for i in range(wd):
+                for j in range(hi):
                     # 右方向
-                    if j<wd-1:
+                    if i<wd-1:
                         # もしoparaterやwireが隣接するクロックゾーンに存在するならデータフローに従ってpathを定義する
-                        s.add(Implies(Or(And(op_exist[i][j][k]==1, wire_exist[node.id][j+1][k]==1),And(op_exist[i][j][k]==1, op_exist[node.id][j+1][k]==1)), path[node.id][i][j+1][k][j][k]==1, path[node.id][i][j+1][k][j][k]==0))
-                        s.add(Implies(And(wire_exist[i][j][k]==1, wire_exist[node.id][j+1][k]==1), path[node.id][i][j+1][k][j][k]==1, path[node.id][i][j+1][k][j][k]==0))
-                        s.add(If(path[node.id][i][j+1][k][j][k]==1, Or(wire_exist[node.id][j+1][k]==1, op_exist[node.id][j+1][k]==1), path[node.id][i][j+1][k][j][k]==0))
+                        s.add(Implies(Or(And(op_exist[tonode][i][j]==1, wire_exist[node.id][i+1][j]==1),And(op_exist[tonode][i][j]==1, op_exist[node.id][i+1][j]==1)), path[i+1][j][i][j]==1))
+                        s.add(Implies(And(wire_exist[tonode][i][j]==1, wire_exist[node.id][i+1][j]==1), path[i+1][j][i][j]==1))
                     # 左方向
-                    if j>0:
-                        s.add(Implies(Or(And(op_exist[i][j][k]==1, wire_exist[node.id][j-1][k]==1),And(op_exist[i][j][k]==1, op_exist[node.id][j-1][k]==1)), path[node.id][i][j-1][k][j][k]==1, path[node.id][i][j-1][k][j][k]==0))
-                        s.add(Implies(And(wire_exist[i][j][k]==1, wire_exist[node.id][j-1][k]==1), path[node.id][i][j-1][k][j][k]==1, path[node.id][i][j-1][k][j][k]==0))
-                        s.add(If(path[node.id][i][j-1][k][j][k]==1, Or(wire_exist[node.id][j-1][k]==1, op_exist[node.id][j-1][k]==1), path[node.id][i][j-1][k][j][k]==0))
+                    if i>0:
+                        s.add(Implies(Or(And(op_exist[tonode][i][j]==1, wire_exist[node.id][i-1][j]==1),And(op_exist[tonode][i][j]==1, op_exist[node.id][i-1][j]==1)), path[i-1][j][i][j]==1))
+                        s.add(Implies(And(wire_exist[tonode][i][j]==1, wire_exist[node.id][i-1][j]==1), path[i-1][j][i][j]==1))
                     # 下方向
-                    if k<hi-1:
-                        s.add(Implies(Or(And(op_exist[i][j][k]==1, wire_exist[node.id][j][k+1]==1),And(op_exist[i][j][k]==1, op_exist[node.id][j][k+1]==1)), path[node.id][i][j][k+1][j][k]==1, path[node.id][i][j][k+1][j][k]==0))
-                        s.add(Implies(And(wire_exist[i][j][k]==1, wire_exist[node.id][j][k+1]==1), path[node.id][i][j][k+1][j][k]==1, path[node.id][i][j][k+1][j][k]==0))
-                        s.add(If(path[node.id][i][j][k+1][j][k]==1, Or(wire_exist[node.id][j][k+1]==1, op_exist[node.id][j][k+1]==1), path[node.id][i][j][k+1][j][k]==0))
+                    if j<hi-1:
+                        s.add(Implies(Or(And(op_exist[tonode][i][j]==1, wire_exist[node.id][i][j+1]==1),And(op_exist[tonode][i][j]==1, op_exist[node.id][i][j+1]==1)), path[i][j+1][i][j]==1))
+                        s.add(Implies(And(wire_exist[tonode][i][j]==1, wire_exist[node.id][i][j+1]==1), path[i][j+1][i][j]==1))
                     # 上方向    
-                    if k>0:
-                        s.add(Implies(Or(And(op_exist[i][j][k]==1, wire_exist[node.id][j][k-1]==1),And(op_exist[i][j][k]==1, op_exist[node.id][j][k-1]==1)), path[node.id][i][j][k-1][j][k]==1, path[node.id][i][j][k-1][j][k]==0))
-                        s.add(Implies(And(wire_exist[i][j][k]==1, wire_exist[node.id][j][k-1]==1), path[node.id][i][j][k][j][k-1]==1, path[node.id][i][j][k][j][k-1]==0))
-                        s.add(If(path[node.id][i][j][k-1][j][k]==1, Or(wire_exist[node.id][j][k-1]==1, op_exist[node.id][j][k-1]==1), path[node.id][i][j][k-1][j][k]==0))
-                    s.add(path[node.id][i][j][k][j][k]==0)
-                    
+                    if j>0:
+                        s.add(Implies(Or(And(op_exist[tonode][i][j]==1, wire_exist[node.id][i][j-1]==1),And(op_exist[tonode][i][j]==1, op_exist[node.id][i][j-1]==1)), path[i][j-1][i][j]==1))
+                        s.add(Implies(And(wire_exist[tonode][i][j]==1, wire_exist[node.id][i][j-1]==1), path[i][j-1][i][j]==1))
     # print model or
     r = s.check()
     if r == sat:
@@ -173,37 +162,25 @@ def main():
             for i in range(wd):
                 print (" [%d] " % m[clock_zone[i][j]].as_long(), end='')
             print()
+        print()
         #for node in range(circ.op_num):
             #print(node)
         for j in range(hi):
+            for i in range(wd-1):
+                print("[ ]",end='')
+                if m[path[i][j][i+1][j]].as_long()==1:
+                    print(">",end='')
+                elif m[path[i+1][j][i][j]].as_long()==1:
+                    print("<",end='')
+                else:
+                    print(" ",end='')
+            print("[ ]")
             for i in range(wd):
-                frg = 0
-                for node in range(circ.op_num):
-                    for tonode in range(circ.op_num):
-                        if i<wd-1 and  m[path[node][tonode][i][j][i+1][j]].as_long()!=0:
-                            print("[ ]>%d" % node,end='')
-                            frg = 1
-                        elif i<wd-1 and m[path[node][tonode][i+1][j][i][j]].as_long()!=0:
-                            print("[ ]<%d" % node,end='')
-                            frg = 1
-                if frg == 0:                
-                    print("[ ]  ",end='')
+                if j<hi-1 and m[path[i][j][i][j+1]].as_long()==1:
+                    print(" v  ",end='')
+                if j<hi-1 and m[path[i][j+1][i][j]].as_long()==1:
+                    print(" A  ",end='')
             print()
-            for i in range(wd):
-                frg = 0
-                for node in range(circ.op_num):
-                    for tonode in range(circ.op_num):
-                        if j<hi-1 and m[path[node][tonode][i][j][i][j+1]].as_long()!=0:
-                            print(" V%d  " % node,end='')
-                            frg = 1
-                        elif j<hi-1 and m[path[node][tonode][i][j+1][i][j]].as_long()!=0:
-                            print(" A%d  " % node,end='')
-                            frg = 1
-                if frg == 0:                
-                    print("     ",end='')
-            print()
-        print()
-            
     else:
         print(r)
        
