@@ -196,7 +196,8 @@ def main():
                 s.add(Implies(Sum([tmp for tmp in tmplist])==0, path[k][i][j][i][j-1]==0))
                 s.add(Implies(Sum([tmp for tmp in tmplist])==0, path[k][i][j-1][i][j]==0))
                
-                    
+    # 同じクロックゾーンにpathが2つ以上存在しない制約
+
     # print model or
     r = s.check()
     if r == sat:
