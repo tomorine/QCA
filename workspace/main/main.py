@@ -1,6 +1,7 @@
 # tomorow@ngc.is.ritsumei.ac.jp
 # writing by python3 
 # coding:utf-8
+# Implies関数はバグの元. 極力If関数を使うべし
 
 
 # インポートz3
@@ -29,11 +30,12 @@ def main():
     # op_exist is int variable : op_exist[op_id][wide][high]
     # wire_exist is int variable : wire_exist[source_op][wide][high]
     # clock_zone is int variable : clock_zone[wide][high]
-    # path is int variable : if information flow exist as operater[a][b] or wire[a][b] -> operater[c][d] or wire[c][d], path[source_node][destination_node][a][b][c][d] is 1
+    # path is int variable : if information flow exist as operater[a][b] or wire[a][b] -> operater[c][d] or wire[c][d], path[source_node][a][b][c][d] is 1
+    # todo : path変数がこのままだとフィードバック回路に対応できない可能性大
     op_exist = [[[Int("op_exist[%d][%d][%d]" % (k,j,i)) for i in range(hi)] for j in range(wd)]for k in range(circ.op_num)]
     wire_exist = [[[Int("wire_exist[%d][%d][%d]" % (k,j,i)) for i in range(hi)] for j in range(wd)] for k in range(circ.op_num)]
     clock_zone = [[Int("clock_zone[%d][%d]" % (j,i)) for i in range(hi)] for j in range(wd)]
-    path = [[[[Int("path[%d][%d][%d][%d]" % (l,k,j,i)) for i in range(hi)] for j in range(wd)] for k in range(hi)] for l in range(wd)]
+    path = [[[[[Int("path[%d][%d][%d][%d][%d]" % (m,l,k,j,i)) for i in range(hi)] for j in range(wd)] for k in range(hi)] for l in range(wd)] for m in range(circ.op_num)]
     
     # 0 <= op_exist,wire_exist <= 1
     # 1 <= clock_zone <= 4
@@ -101,14 +103,18 @@ def main():
                     s.add(If(op_exist[i][j][k]==1, Sum([sum_ for sum_ in sumlist])==len(node.input), op_exist[i][j][k]==0))
                     
 
-    # wire has no roop 
+    # wireはループしない制約
     # 0 <= path <= 1 
     for i in range(wd):
         for j in range(hi):
             for ir in range(wd):
                 for jr in range(hi):
-                    s.add(path[i][j][ir][jr]>=0, path[i][j][ir][jr]<=1)
-                    
+                    for node in range(circ.op_num):
+                        s.add(path[node][i][j][ir][jr]>=0, path[node][i][j][ir][jr]<=1)
+                        s.add(path[node][i][j][i][j]==0)
+                        for irr in range(wd):
+                            for jrr in range(hi):
+                                s.add(Implies(And(path[node][i][j][ir][jr]==1, path[node][ir][jr][irr][jrr]==1),path[node][i][j][irr][jrr]==1))
     # setting path on oparater or wire
     # wireとoperaterが隣接していないクロックゾーンのpathを0にする方がきれいかも
     for tonode in range(circ.op_num):
@@ -119,20 +125,78 @@ def main():
                     # 右方向
                     if i<wd-1:
                         # もしoparaterやwireが隣接するクロックゾーンに存在するならデータフローに従ってpathを定義する
-                        s.add(Implies(Or(And(op_exist[tonode][i][j]==1, wire_exist[node.id][i+1][j]==1),And(op_exist[tonode][i][j]==1, op_exist[node.id][i+1][j]==1)), path[i+1][j][i][j]==1))
-                        s.add(Implies(And(wire_exist[tonode][i][j]==1, wire_exist[node.id][i+1][j]==1), path[i+1][j][i][j]==1))
+                        s.add(Implies(Or(And(op_exist[tonode][i][j]==1, wire_exist[node.id][i+1][j]==1),And(op_exist[tonode][i][j]==1, op_exist[node.id][i+1][j]==1)), path[node.id][i+1][j][i][j]==1))
+                        s.add(Implies(And(wire_exist[tonode][i][j]==1, wire_exist[node.id][i+1][j]==1), path[node.id][i+1][j][i][j]==1))
                     # 左方向
                     if i>0:
-                        s.add(Implies(Or(And(op_exist[tonode][i][j]==1, wire_exist[node.id][i-1][j]==1),And(op_exist[tonode][i][j]==1, op_exist[node.id][i-1][j]==1)), path[i-1][j][i][j]==1))
-                        s.add(Implies(And(wire_exist[tonode][i][j]==1, wire_exist[node.id][i-1][j]==1), path[i-1][j][i][j]==1))
+                        s.add(Implies(Or(And(op_exist[tonode][i][j]==1, wire_exist[node.id][i-1][j]==1),And(op_exist[tonode][i][j]==1, op_exist[node.id][i-1][j]==1)), path[node.id][i-1][j][i][j]==1))
+                        s.add(Implies(And(wire_exist[tonode][i][j]==1, wire_exist[node.id][i-1][j]==1), path[node.id][i-1][j][i][j]==1))
                     # 下方向
                     if j<hi-1:
-                        s.add(Implies(Or(And(op_exist[tonode][i][j]==1, wire_exist[node.id][i][j+1]==1),And(op_exist[tonode][i][j]==1, op_exist[node.id][i][j+1]==1)), path[i][j+1][i][j]==1))
-                        s.add(Implies(And(wire_exist[tonode][i][j]==1, wire_exist[node.id][i][j+1]==1), path[i][j+1][i][j]==1))
+                        s.add(Implies(Or(And(op_exist[tonode][i][j]==1, wire_exist[node.id][i][j+1]==1),And(op_exist[tonode][i][j]==1, op_exist[node.id][i][j+1]==1)), path[node.id][i][j+1][i][j]==1))
+                        s.add(Implies(And(wire_exist[tonode][i][j]==1, wire_exist[node.id][i][j+1]==1), path[node.id][i][j+1][i][j]==1))
                     # 上方向    
                     if j>0:
-                        s.add(Implies(Or(And(op_exist[tonode][i][j]==1, wire_exist[node.id][i][j-1]==1),And(op_exist[tonode][i][j]==1, op_exist[node.id][i][j-1]==1)), path[i][j-1][i][j]==1))
-                        s.add(Implies(And(wire_exist[tonode][i][j]==1, wire_exist[node.id][i][j-1]==1), path[i][j-1][i][j]==1))
+                        s.add(Implies(Or(And(op_exist[tonode][i][j]==1, wire_exist[node.id][i][j-1]==1),And(op_exist[tonode][i][j]==1, op_exist[node.id][i][j-1]==1)), path[node.id][i][j-1][i][j]==1))
+                        s.add(Implies(And(wire_exist[tonode][i][j]==1, wire_exist[node.id][i][j-1]==1), path[node.id][i][j-1][i][j]==1))
+
+    # wireが途切れないようにする制約
+    for k in range(wd):
+        for k in range(hi):
+            for tonode in range(circ.op_num):
+                if circ.find_node_id(tonode)!=-1:
+                    for node in circ.find_node_id(tonode).input:
+                        i = node.id
+                        tmplist = []
+                        pathlist = []
+                        if j<wd-1:
+                            tmplist.append(wire_exist[i][j+1][k])
+                            tmplist.append(op_exist[i][j+1][k])
+                            tmplist.append(op_exist[tonode][j+1][k])
+                            pathlist.append(path[i][j][k][j+1][k])
+                            pathlist.append(path[i][j+1][k][j][k])
+                        if j>0:
+                            tmplist.append(wire_exist[i][j-1][k])
+                            tmplist.append(op_exist[i][j-1][k])
+                            tmplist.append(op_exist[tonode][j-1][k])
+                            pathlist.append(path[i][j][k][j-1][k])
+                            pathlist.append(path[i][j-1][k][j][k])
+                        if k>hi-1:
+                            tmplist.append(wire_exist[i][j][k+1])
+                            tmplist.append(op_exist[i][j][k+1])
+                            tmplist.append(op_exist[tonode][j][k+1])
+                            pathlist.append(path[i][j][k][j][k+1])
+                            pathlist.append(path[i][j][k+1][j][k])
+                        if k>0:
+                            tmplist.append(wire_exist[i][j][k-1])
+                            tmplist.append(op_exist[i][j][k-1])
+                            tmplist.append(op_exist[tonode][j][k-1])
+                            pathlist.append(path[i][j][k][j][k-1])
+                            pathlist.append(path[i][j][k-1][j][k])
+                        s.add(If(wire_exist[i][j][k]==1, Sum([tmp for tmp in tmplist])>=2, wire_exist[i][j][k]==0))
+                        s.add(If(wire_exist[i][j][k]==1, Sum([tmpath for tmpath in pathlist])>=2, wire_exist[i][j][k]==0))
+                
+    # 空白のクロックゾーンからpathが出ないようにする制約
+    for i in range(wd):
+        for j in range(hi):
+            tmplist = []
+            for k in range(circ.op_num):
+                tmplist.append(op_exist[k][i][j])
+                tmplist.append(wire_exist[k][i][j])
+            if i<wd-1:
+                s.add(Implies(Sum([tmp for tmp in tmplist])==0, path[k][i][j][i+1][j]==0))
+                s.add(Implies(Sum([tmp for tmp in tmplist])==0, path[k][i+1][j][i][j]==0))
+            if i>0:
+                s.add(Implies(Sum([tmp for tmp in tmplist])==0, path[k][i][j][i-1][j]==0))
+                s.add(Implies(Sum([tmp for tmp in tmplist])==0, path[k][i-1][j][i][j]==0))
+            if j<hi-1:
+                s.add(Implies(Sum([tmp for tmp in tmplist])==0, path[k][i][j][i][j+1]==0))
+                s.add(Implies(Sum([tmp for tmp in tmplist])==0, path[k][i][j+1][i][j]==0))
+            if j>0:
+                s.add(Implies(Sum([tmp for tmp in tmplist])==0, path[k][i][j][i][j-1]==0))
+                s.add(Implies(Sum([tmp for tmp in tmplist])==0, path[k][i][j-1][i][j]==0))
+               
+                    
     # print model or
     r = s.check()
     if r == sat:
@@ -157,30 +221,36 @@ def main():
                 print(' [%s] '% frg, end='')
                 frg = '*'
             print()
+        #for node in range(circ.op_num)
+        # todo:fix print function
+        print("\npath")
+        for j in range(hi):
+            for i in range(wd-1):
+                print("[ ]",end='')
+                frg = 0
+                for node in range(circ.op_num):
+                    if m[path[node][i][j][i+1][j]].as_long()==1:
+                        print(">",end='')
+                        frg = 1
+                    elif m[path[node][i+1][j][i][j]].as_long()==1:
+                        print("<",end='')
+                        frg = 1
+                if frg ==1:
+                    print(" ",end='')
+            print("[ ]")
+            for i in range(wd):
+                for node in range(circ.op_num):
+                    if j<hi-1 and m[path[node][i][j][i][j+1]].as_long()==1:
+                        print(" v  ",end='')
+                    if j<hi-1 and m[path[node][i][j+1][i][j]].as_long()==1:
+                        print(" A  ",end='')
+            print()
         print("\nclock_zone")
         for j in range(hi):
             for i in range(wd):
                 print (" [%d] " % m[clock_zone[i][j]].as_long(), end='')
             print()
         print()
-        #for node in range(circ.op_num):
-            #print(node)
-        for j in range(hi):
-            for i in range(wd-1):
-                print("[ ]",end='')
-                if m[path[i][j][i+1][j]].as_long()==1:
-                    print(">",end='')
-                elif m[path[i+1][j][i][j]].as_long()==1:
-                    print("<",end='')
-                else:
-                    print(" ",end='')
-            print("[ ]")
-            for i in range(wd):
-                if j<hi-1 and m[path[i][j][i][j+1]].as_long()==1:
-                    print(" v  ",end='')
-                if j<hi-1 and m[path[i][j+1][i][j]].as_long()==1:
-                    print(" A  ",end='')
-            print()
     else:
         print(r)
        

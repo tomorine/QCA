@@ -1,5 +1,14 @@
 from z3 import *
 
+A = IntVector('a',5)
+B = RealVector('b',5)
+C = IntVector('c',5)
+print (A)
+print (B)
+print (C)
+print ([b**2 for b in B])
+print (Sum([b**2 for b in B]))
+
 x = Int('x')
 y = Int('y')
 p,q = Bools(["p","q"])
