@@ -24,19 +24,21 @@ def main():
 
     # 制約式の追加
     hi = 5 # circuit high
-    wd = 6 # circuit wide
+    wd = 5 # circuit wide
     s = Solver()
     
     # op_exist is int variable : op_exist[op_id][wide][high]
     # wire_exist is int variable : wire_exist[source_op][wide][high]
     # clock_zone is int variable : clock_zone[wide][high]
     # path is int variable : if information flow exist as operater[a][b] or wire[a][b] -> operater[c][d] or wire[c][d], path[source_node][a][b][c][d] is 1
-    # todo : pathのデータフローが衝突する問題
-    # todo : wireがoperatorから離れてしまう問題（新しい変数iが必要）
+    # ic is int variable : operatorの周りのクロックゾーンにファンイン数（ファンアウト数）と同じ数だけ入力（出力）を確約する。
+    # todo : pathのデータフローが衝突する問題(4/30)
+    # todo : wireがoperatorから離れてしまう問題（新しい変数icが必要）(4/30)
     op_exist = [[[Int("op_exist[%d][%d][%d]" % (k,j,i)) for i in range(hi)] for j in range(wd)]for k in range(circ.op_num)]
     wire_exist = [[[Int("wire_exist[%d][%d][%d]" % (k,j,i)) for i in range(hi)] for j in range(wd)] for k in range(circ.op_num)]
-    clock_zone = [[Int("clock_zone[%d][%d]" % (j,i)) for i in range(hi)] for j in range(wd)]
+    clock_zone = [[Int("clock_zone[%d][%d]" % (j, i)) for i in range(hi)] for j in range(wd)]
     path = [[[[[Int("path[%d][%d][%d][%d][%d]" % (m,l,k,j,i)) for i in range(hi)] for j in range(wd)] for k in range(hi)] for l in range(wd)] for m in range(circ.op_num)]
+    ic = [[[[Int("clock_zone[%d][%d][%d][%d]" % (m,k,j,i)) for i in range(hi)] for j in range(wd)] for k in range(hi)] for m in range(wd)]
     
     # 0 <= op_exist,wire_exist <= 1
     # 1 <= clock_zone <= 4
@@ -178,24 +180,35 @@ def main():
                         s.add(If(wire_exist[i][j][k]==1, Sum([tmpath for tmpath in pathlist])>=2, wire_exist[i][j][k]==0))
                 
     # 空白のクロックゾーンからpathが出ないようにする制約
+    # todo : 何故かunsatになるpath[kr]~~の制約式が怪しいのだがどこが間違っているのか(4/30)
     for i in range(wd):
         for j in range(hi):
             tmplist = []
             for k in range(circ.op_num):
                 tmplist.append(op_exist[k][i][j])
                 tmplist.append(wire_exist[k][i][j])
+                for kr in circ.find_node_id(k).input:
+                    node = kr.id
+                    if i<wd-1:
+                        s.add(Implies(op_exist[k][i][j]==0,path[node][i+1][j][i][j] == 0))
+                        s.add(Implies(wire_exist[k][i][j] == 0, path[node][i+1][j][i][j] == 0))
+                    if i>0:
+                        s.add(Implies(op_exist[k][i][j] == 0, path[node][i-1][j][i][j] == 0))
+                        s.add(Implies(wire_exist[k][i][j] == 0, path[node][i-1][j][i][j] == 0))
+                    if j<hi-1:
+                        s.add(Implies(op_exist[k][i][j] == 0, path[node][i][j+1][i][j] == 0))
+                        s.add(Implies(wire_exist[k][i][j] == 0, path[node][i][j+1][i][j] == 0))
+                    if j>0:
+                        s.add(Implies(op_exist[k][i][j] == 0, path[node][i][j-1][i][j] == 0))
+                        s.add(Implies(wire_exist[k][i][j] == 0, path[node][i][j-1][i][j] == 0))
             if i<wd-1:
                 s.add(Implies(Sum([tmp for tmp in tmplist])==0, path[k][i][j][i+1][j]==0))
-                s.add(Implies(Sum([tmp for tmp in tmplist])==0, path[k][i+1][j][i][j]==0))
             if i>0:
                 s.add(Implies(Sum([tmp for tmp in tmplist])==0, path[k][i][j][i-1][j]==0))
-                s.add(Implies(Sum([tmp for tmp in tmplist])==0, path[k][i-1][j][i][j]==0))
             if j<hi-1:
                 s.add(Implies(Sum([tmp for tmp in tmplist])==0, path[k][i][j][i][j+1]==0))
-                s.add(Implies(Sum([tmp for tmp in tmplist])==0, path[k][i][j+1][i][j]==0))
             if j>0:
                 s.add(Implies(Sum([tmp for tmp in tmplist])==0, path[k][i][j][i][j-1]==0))
-                s.add(Implies(Sum([tmp for tmp in tmplist])==0, path[k][i][j-1][i][j]==0))
                
     # 同じクロックゾーンを跨るpathが2つ以上存在しない制約
     for i in range(wd):
@@ -254,7 +267,6 @@ def main():
                 frg = '*'
             print()
         # for node in range(circ.op_num)
-        # todo:fix print function
         # print path
         print("\npath")
         for j in range(hi):
