@@ -31,7 +31,8 @@ def main():
     # wire_exist is int variable : wire_exist[source_op][wide][high]
     # clock_zone is int variable : clock_zone[wide][high]
     # path is int variable : if information flow exist as operater[a][b] or wire[a][b] -> operater[c][d] or wire[c][d], path[source_node][a][b][c][d] is 1
-    # todo : path変数がこのままだとフィードバック回路に対応できない可能性大
+    # todo : pathのデータフローが衝突する問題
+    # todo : wireがoperatorから離れてしまう問題（新しい変数iが必要）
     op_exist = [[[Int("op_exist[%d][%d][%d]" % (k,j,i)) for i in range(hi)] for j in range(wd)]for k in range(circ.op_num)]
     wire_exist = [[[Int("wire_exist[%d][%d][%d]" % (k,j,i)) for i in range(hi)] for j in range(wd)] for k in range(circ.op_num)]
     clock_zone = [[Int("clock_zone[%d][%d]" % (j,i)) for i in range(hi)] for j in range(wd)]
@@ -71,7 +72,7 @@ def main():
             if j<hi-1:
                 s.add(clock_zone[i][j]!=clock_zone[i][j+1])
 
-    # operater has adjacent wire or operater
+    # operator has adjacent wire or operator
     for j in range(wd):
         for k in range(hi):
             for i in range(circ.op_num):
@@ -116,7 +117,7 @@ def main():
                             for jrr in range(hi):
                                 s.add(Implies(And(path[node][i][j][ir][jr]==1, path[node][ir][jr][irr][jrr]==1),path[node][i][j][irr][jrr]==1))
     # setting path on oparater or wire
-    # wireとoperaterが隣接していないクロックゾーンのpathを0にする方がきれいかも
+    # wireとoperatorが隣接していないクロックゾーンのpathを0にする方がきれいかも
     for tonode in range(circ.op_num):
         input = circ.find_node_id(tonode).input
         for node in input:
@@ -196,12 +197,41 @@ def main():
                 s.add(Implies(Sum([tmp for tmp in tmplist])==0, path[k][i][j][i][j-1]==0))
                 s.add(Implies(Sum([tmp for tmp in tmplist])==0, path[k][i][j-1][i][j]==0))
                
-    # 同じクロックゾーンにpathが2つ以上存在しない制約
+    # 同じクロックゾーンを跨るpathが2つ以上存在しない制約
+    for i in range(wd):
+        for j in range(hi):
+            tmplist = []
+            if i < wd - 1:
+                for node in range(circ.op_num):
+                    tmplist.append(path[node][i+1][j][i][j])
+                    tmplist.append(path[node][i][j][i+1][j])
+                s.add(Sum([tmp for tmp in tmplist])<=1)
+                tmplist = []
+                if i > 0:
+                    for node in range(circ.op_num):
+                        tmplist.append(path[node][i-1][j][i][j])
+                        tmplist.append(path[node][i][j][i-1][j])
+                    s.add(Sum([tmp for tmp in tmplist]) <= 1)
+                tmplist = []
+                if j < hi - 1:
+                    for node in range(circ.op_num):
+                        tmplist.append(path[node][i][j+1][i][j])
+                        tmplist.append(path[node][i][j][i][j+1])
+                    s.add(Sum([tmp for tmp in tmplist]) <= 1)
+                tmplist = []
+                if j > 0:
+                    for node in range(circ.op_num):
+                        tmplist.append(path[node][i][j-1][i][j])
+                        tmplist.append(path[node][i][j][i][j-1])
+                    s.add(Sum([tmp for tmp in tmplist]) <= 1)
+
+
 
     # print model or
     r = s.check()
     if r == sat:
         m = s.model()
+        # print operator
         print("oprater")
         for k in range(hi):
             frg = '*'
@@ -212,6 +242,7 @@ def main():
                 print(" [%s] " % frg, end='')
                 frg = '*'
             print()
+        # print wire
         print("\nwire")
         for k in range(hi):
             frg = '*'
@@ -222,8 +253,9 @@ def main():
                 print(' [%s] '% frg, end='')
                 frg = '*'
             print()
-        #for node in range(circ.op_num)
+        # for node in range(circ.op_num)
         # todo:fix print function
+        # print path
         print("\npath")
         for j in range(hi):
             for i in range(wd-1):
@@ -236,15 +268,20 @@ def main():
                     elif m[path[node][i+1][j][i][j]].as_long()==1:
                         print("<",end='')
                         frg = 1
-                if frg ==1:
+                if frg==0:
                     print(" ",end='')
             print("[ ]")
             for i in range(wd):
+                frg = 0
                 for node in range(circ.op_num):
                     if j<hi-1 and m[path[node][i][j][i][j+1]].as_long()==1:
                         print(" v  ",end='')
+                        frg = 1
                     if j<hi-1 and m[path[node][i][j+1][i][j]].as_long()==1:
                         print(" A  ",end='')
+                        frg = 1
+                if frg==0:
+                    print("    ",end='')
             print()
         print("\nclock_zone")
         for j in range(hi):
