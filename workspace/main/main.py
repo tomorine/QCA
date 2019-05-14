@@ -36,7 +36,7 @@ def main():
     op_exist = [[[Int("op_exist[%d][%d][%d]" % (k,j,i)) for i in range(hi)] for j in range(wd)]for k in range(circ.op_num)]
     wire_exist = [[[[Int("wire_exist[%d][%d][%d][%d]" % (m,k,j,i)) for i in range(hi)] for j in range(wd)] for k in range(circ.op_num)] for m in range(circ.op_num)]
     clock_zone = [[Int("clock_zone[%d][%d]" % (j, i)) for i in range(hi)] for j in range(wd)]
-    path = [[[[Int("path[%d][%d][%d][%d]" % (l,k,j,i)) for i in range(hi)] for j in range(wd)] for k in range(hi)] for l in range(wd)]
+    path = [[[[Int("path[%d][%d][%d][%d]" % (l,k,j,i)) for i in range(hi+1)] for j in range(wd+1)] for k in range(hi+1)] for l in range(wd+1)]
     connect = [[[[Int("connect[%d][%d][%d][%d]" % (m,k,j,i)) for i in range(hi)] for j in range(wd)] for k in range(hi)] for m in range(wd)]
     
     # 0 <= op_exist,wire_exist,connect <= 1
@@ -79,39 +79,10 @@ def main():
             if j<hi-1:
                 s.add(clock_zone[i][j]!=clock_zone[i][j+1])
 
-    # operator has adjacent wire or operator
-    #for j in range(wd):
-        #for k in range(hi):
-            #for i in range(circ.op_num):
-                #sumlist = []
-                #idlist=[]
-                #node = circ.find_node_id(i)
-                #if node.gatetype != 'p_input':
-                    #for input in node.input:
-                        #tmp = input.id
-                        #idlist.append(tmp)
-                        #tmplist = []
-                        #if j<wd-1:
-                            #tmplist.append(op_exist[tmp][j+1][k])
-                            #tmplist.append(wire_exist[tmp][j+1][k])
-                        #if j>0:
-                            #tmplist.append(op_exist[tmp][j-1][k])
-                            #tmplist.append(wire_exist[tmp][j-1][k])
-                        #if k<hi-1:
-                            #tmplist.append(op_exist[tmp][j][k+1])
-                            #tmplist.append(wire_exist[tmp][j][k+1])
-                        #if k>0:
-                            #tmplist.append(op_exist[tmp][j][k-1])
-                            #tmplist.append(wire_exist[tmp][j][k-1])
-                        #for rist in tmplist:
-                            #sumlist.append(rist)
-                        #s.add(If(op_exist[i][j][k]==1, Sum([tmp for tmp in tmplist])==1, op_exist[i][j][k]==0))
-                #for id in idlist:
-                    #s.add(If(wire_exist[id][j][k]==1, Sum([sum_ for sum_ in sumlist])>=2, wire_exist[id][j][k]==0))
-                    #s.add(If(op_exist[i][j][k]==1, Sum([sum_ for sum_ in sumlist])==len(node.input), op_exist[i][j][k]==0))
+
 
     # operatorの隣接するクロックゾーンにファンイン（ファンアウト）数と同じ数のconnectを定義する制約
-    # pathの存在する場所にopに向かうpathの開始クロックゾーンにopかwireを定義する制約
+    # 同時にopかwireを定義する定義する制約
     for i in range(wd):
         for j in range(hi):
             for node in range(circ.op_num):
@@ -131,199 +102,137 @@ def main():
                     outlist.append(connect[i][j][i][j - 1])
                 s.add(If(op_exist[node][i][j] == 1, Sum([tmp for tmp in inlist]) == len(circ.find_node_id(node).input), op_exist[node][i][j]==0))
                 s.add(If(op_exist[node][i][j]==1, Sum([tmp for tmp in outlist]) == len(circ.find_node_id(node).output), op_exist[node][i][j]==0))
-
                 # opに入る方のpath
-                rtmplist = []
-                ltmplist = []
-                utmplist = []
-                dtmplist = []
+                rtmplist = [] # 右方向のwireかopを複数回使わせないための変数
+                ltmplist = [] # 左方向のwireかopを複数回使わせないための変数
+                utmplist = [] # 上方向のwireかopを複数回使わせないための変数
+                dtmplist = [] # 下方向のwireかopを複数回使わせないための変数
                 for sonode in circ.find_node_id(node).input:
+                    # tmplist = []
+                    rinlist = []
+                    uinlist = []
+                    dinlist = []
+                    linlist = []
                     id = sonode.id
-                    rlist = []
-                    ulist = []
-                    dlist = []
-                    llist = []
                     if i < wd-1:
+                        # tmplist.append(op_exist[id][i+1][j])
+                        # tmplist.append(wire_exist[id][node][i+1][j])
+                        rinlist.append(op_exist[id][i+1][j])
+                        rinlist.append(wire_exist[id][node][i+1][j])
+                        s.add(Implies(And(op_exist[node][i][j] == 1, path[i+1][j][i][j] == 1,
+                                          Sum([tmp for tmp in rtmplist]) == 0), Sum([tmp for tmp in rinlist]) == 1))
                         rtmplist.append(op_exist[id][i+1][j])
                         rtmplist.append(wire_exist[id][node][i+1][j])
-                        rlist.append(op_exist[id][i+1][j])
-                        rlist.append(wire_exist[id][node][i+1][j])
-                        s.add(Implies(And(op_exist[node][i][j] == 1, path[i+1][j][i][j] == 1),
-                                      Sum([tmp for tmp in rlist]) == 1))
                     if i > 0:
+                        # tmplist.append(op_exist[id][i-1][j])
+                        # tmplist.append(wire_exist[id][node][i-1][j])
+                        linlist.append(op_exist[id][i-1][j])
+                        linlist.append(wire_exist[id][node][i-1][j])
+                        s.add(Implies(
+                            And(op_exist[node][i][j] == 1, path[i-1][j][i][j] == 1, Sum([tmp for tmp in ltmplist]) == 0,
+                                Or(Sum([tmp for tmp in rtmplist]) == 1, path[i+1][j][i][j]==0)),
+                                Sum([tmp for tmp in linlist]) == 1))
                         ltmplist.append(op_exist[id][i-1][j])
                         ltmplist.append(wire_exist[id][node][i-1][j])
-                        llist.append(op_exist[id][i-1][j])
-                        llist.append(wire_exist[id][node][i-1][j])
-                        if i < wd-1:
-                            s.add(Implies(And(op_exist[node][i][j] == 1, path[i-1][j][i][j] == 1,
-                                              wire_exist[id][node][i+1][j] == 0), Sum([tmp for tmp in llist]) == 1))
-                        else:
-                            s.add(Implies(And(op_exist[node][i][j] == 1, path[i-1][j][i][j] == 1),
-                                          Sum([tmp for tmp in llist]) == 1))
                     if j < hi-1:
+                        # tmplist.append(op_exist[id][i][j+1])
+                        # tmplist.append(wire_exist[id][node][i][j+1])
+                        dinlist.append(op_exist[id][i][j+1])
+                        dinlist.append(wire_exist[id][node][i][j+1])
+                        s.add(Implies(
+                            And(op_exist[node][i][j] == 1, path[i][j+1][i][j] == 1, Sum([tmp for tmp in dtmplist]) == 0,
+                                Or(Sum([tmp for tmp in rtmplist]) == 1, path[i+1][j][i][j] == 0),
+                                Or(Sum([tmp for tmp in ltmplist]) == 1, path[i-1][j][i][j] == 0)),
+                                Sum([tmp for tmp in dinlist]) == 1))
                         dtmplist.append(op_exist[id][i][j+1])
                         dtmplist.append(wire_exist[id][node][i][j+1])
-                        dlist.append(op_exist[id][i][j+1])
-                        dlist.append(wire_exist[id][node][i][j+1])
-                        if i < wd-1 and i > 0:
-                            s.add(Implies(And(op_exist[node][i][j] == 1, path[i][j+1][i][j] == 1,
-                                              wire_exist[id][node][i+1][j] == 0, wire_exist[id][node][i-1][j] == 0),
-                                          Sum([tmp for tmp in dlist]) == 1))
-                        elif i < wd-1:
-                            s.add(Implies(And(op_exist[node][i][j] == 1, path[i][j+1][i][j] == 1,
-                                              wire_exist[id][node][i+1][j] == 0, ), Sum([tmp for tmp in dlist]) == 1))
-                        elif i > 0:
-                            s.add(Implies(And(op_exist[node][i][j] == 1, path[i][j+1][i][j] == 1,
-                                              wire_exist[id][node][i-1][j] == 0), Sum([tmp for tmp in dlist]) == 1))
-                        else:
-                            s.add(Implies(And(op_exist[node][i][j] == 1, path[i][j+1][i][j] == 1),
-                                          Sum([tmp for tmp in dlist]) == 1))
                     if j > 0:
+                        # tmplist.append(op_exist[id][i][j-1])
+                        # tmplist.append(wire_exist[id][node][i][j-1])
+                        uinlist.append(op_exist[id][i][j-1])
+                        uinlist.append(wire_exist[id][node][i][j-1])
+                        s.add(Implies(
+                            And(op_exist[node][i][j] == 1, path[i][j-1][i][j] == 1, Sum([tmp for tmp in utmplist]) == 0,
+                                Or(Sum([tmp for tmp in dtmplist]) == 1, path[i][j+1][i][j] == 0),
+                                Or(Sum([tmp for tmp in rtmplist]) == 1, path[i+1][j][i][j] == 0),
+                                Or(Sum([tmp for tmp in ltmplist]) == 1, path[i-1][j][i][j] == 0)),
+                                Sum([tmp for tmp in uinlist]) == 1))
                         utmplist.append(op_exist[id][i][j-1])
                         utmplist.append(wire_exist[id][node][i][j-1])
-                        ulist.append(op_exist[id][i][j-1])
-                        ulist.append(wire_exist[id][node][i][j-1])
-                        if i < wd-1 and i > 0 and j < hi-1:
-                            s.add(Implies(And(op_exist[node][i][j] == 1, path[i][j-1][i][j] == 1,
-                                              wire_exist[id][node][i+1][j] == 0, wire_exist[id][node][i-1][j] == 0,
-                                              wire_exist[id][node][i][j+1] == 0), Sum([tmp for tmp in ulist]) == 1))
-                        elif i < wd-1 and i > 0:
-                            s.add(Implies(And(op_exist[node][i][j] == 1, path[i][j-1][i][j] == 1,
-                                              wire_exist[id][node][i+1][j] == 0, wire_exist[id][node][i-1][j] == 0),
-                                          Sum([tmp for tmp in ulist]) == 1))
-                        elif i < wd-1 and j < hi-1:
-                            s.add(Implies(And(op_exist[node][i][j] == 1, path[i][j-1][i][j] == 1,
-                                              wire_exist[id][node][i+1][j] == 0, wire_exist[id][node][i][j+1] == 0),
-                                          Sum([tmp for tmp in ulist]) == 1))
-                        elif i > 0 and j < hi-1:
-                            s.add(Implies(And(op_exist[node][i][j] == 1, path[i][j-1][i][j] == 1,
-                                              wire_exist[id][node][i-1][j] == 0, wire_exist[id][node][i][j+1] == 0),
-                                          Sum([tmp for tmp in ulist]) == 1))
-                        elif i < wd-1:
-                            s.add(Implies(And(op_exist[node][i][j] == 1, path[i][j-1][i][j] == 1,
-                                              wire_exist[id][node][i+1][j] == 0), Sum([tmp for tmp in ulist]) == 1))
-                        elif i > 0:
-                            s.add(Implies(And(op_exist[node][i][j] == 1, path[i][j-1][i][j] == 1,
-                                              wire_exist[id][node][i-1][j] == 0), Sum([tmp for tmp in ulist]) == 1))
-                        elif j < hi-1:
-                            s.add(Implies(And(op_exist[node][i][j] == 1, path[i][j-1][i][j] == 1,
-                                              wire_exist[id][node][i][j+1] == 0), Sum([tmp for tmp in ulist]) == 1))
-                        else:
-                            s.add(Implies(And(op_exist[node][i][j] == 1, path[i][j-1][i][j] == 1),
-                                          Sum([tmp for tmp in ulist]) == 1))
-                s.add(Sum([tmp for tmp in rtmplist]) <= 1)
-                s.add(Sum([tmp for tmp in ltmplist]) <= 1)
-                s.add(Sum([tmp for tmp in utmplist]) <= 1)
-                s.add(Sum([tmp for tmp in dtmplist]) <= 1)
-
-                # opから出る方のpath
-                """
-                rtmplist = []
-                ltmplist = []
-                utmplist = []
-                dtmplist = []
+                    s.add(If(op_exist[node][i][j] == 1, Sum([tmp for tmp in rinlist])+Sum([tmp for tmp in linlist])+Sum(
+                        [tmp for tmp in dinlist])+Sum([tmp for tmp in uinlist]) == 1, op_exist[node][i][j] == 0))
+                rtmplist.clear()
+                ltmplist.clear()
+                utmplist.clear()
+                dtmplist.clear()
+                # opから出る方のpathに対し定義
                 for tonode in circ.find_node_id(node).output:
+                    # tmplist = []
+                    routlist = []
+                    uoutlist = []
+                    doutlist = []
+                    loutlist = []
                     id = tonode.id
-                    rlist = []
-                    ulist = []
-                    dlist = []
-                    llist = []
                     if i < wd-1:
+                        # tmplist.append(op_exist[id][i+1][j])
+                        # tmplist.append(wire_exist[node][id][i+1][j])
+                        routlist.append(op_exist[id][i+1][j])
+                        routlist.append(wire_exist[node][id][i+1][j])
+                        s.add(Implies(And(op_exist[node][i][j] == 1, path[i][j][i+1][j] == 1,
+                                          Sum([tmp for tmp in rtmplist]) == 0), Sum([tmp for tmp in routlist]) == 1))
                         rtmplist.append(op_exist[id][i+1][j])
                         rtmplist.append(wire_exist[node][id][i+1][j])
-                        rlist.append(op_exist[id][i+1][j])
-                        rlist.append(wire_exist[node][id][i+1][j])
-                        s.add(Implies(And(op_exist[node][i][j] == 1, path[i][j][i+1][j] == 1),Sum([tmp for tmp in rlist]) == 1))
                     if i > 0:
+                        # tmplist.append(op_exist[id][i-1][j])
+                        # tmplist.append(wire_exist[node][id][i-1][j])
+                        loutlist.append(op_exist[id][i-1][j])
+                        loutlist.append(wire_exist[node][id][i-1][j])
+                        s.add(Implies(
+                            And(op_exist[node][i][j] == 1, path[i][j][i-1][j] == 1, Sum([tmp for tmp in ltmplist]) == 0,
+                                Or(Sum([tmp for tmp in rtmplist]) == 1, path[i][j][i+1][j] == 0)),
+                            Sum([tmp for tmp in loutlist]) == 1))
                         ltmplist.append(op_exist[id][i-1][j])
                         ltmplist.append(wire_exist[node][id][i-1][j])
-                        llist.append(op_exist[id][i-1][j])
-                        llist.append(wire_exist[node][id][i-1][j])
-                        if i < wd-1:
-                            s.add(Implies(And(op_exist[node][i][j] == 1, path[i][j][i-1][j] == 1,
-                                              wire_exist[node][id][i+1][j] == 0), Sum([tmp for tmp in llist]) == 1))
-                        else:
-                            s.add(Implies(And(op_exist[node][i][j] == 1, path[i][j][i-1][j] == 1),
-                                          Sum([tmp for tmp in llist]) == 1))
                     if j < hi-1:
+                        # tmplist.append(op_exist[id][i][j+1])
+                        # tmplist.append(wire_exist[node][id][i][j+1])
+                        doutlist.append(op_exist[id][i][j+1])
+                        doutlist.append(wire_exist[node][id][i][j+1])
+                        s.add(Implies(
+                            And(op_exist[node][i][j] == 1, path[i][j][i][j+1] == 1, Sum([tmp for tmp in dtmplist]) == 0,
+                                Or(Sum([tmp for tmp in rtmplist]) == 1, path[i][j][i+1][j] == 0),
+                                Or(Sum([tmp for tmp in ltmplist]) == 1, path[i][j][i-1][j] == 0)),
+                            Sum([tmp for tmp in doutlist]) == 1))
                         dtmplist.append(op_exist[id][i][j+1])
                         dtmplist.append(wire_exist[node][id][i][j+1])
-                        dlist.append(op_exist[id][i][j+1])
-                        dlist.append(wire_exist[node][id][i][j+1])
-                        if i < wd-1 and i > 0:
-                            s.add(Implies(And(op_exist[node][i][j] == 1, path[i][j][i][j+1] == 1,
-                                              wire_exist[node][id][i+1][j] == 0, wire_exist[node][id][i-1][j] == 0),
-                                          Sum([tmp for tmp in dlist]) == 1))
-                        elif i < wd-1:
-                            s.add(Implies(And(op_exist[node][i][j] == 1, path[i][j][i][j+1] == 1,
-                                              wire_exist[node][id][i+1][j] == 0, ), Sum([tmp for tmp in dlist]) == 1))
-                        elif i > 0:
-                            s.add(Implies(And(op_exist[node][i][j] == 1, path[i][j][i][j+1] == 1,
-                                              wire_exist[node][id][i-1][j] == 0), Sum([tmp for tmp in dlist]) == 1))
-                        else:
-                            s.add(Implies(And(op_exist[node][i][j] == 1, path[i][j][i][j+1] == 1),
-                                          Sum([tmp for tmp in dlist]) == 1))
                     if j > 0:
+                        # tmplist.append(op_exist[id][i][j-1])
+                        # tmplist.append(wire_exist[node][id][i][j-1])
+                        uoutlist.append(op_exist[id][i][j-1])
+                        uoutlist.append(wire_exist[node][id][i][j-1])
+                        s.add(Implies(
+                            And(op_exist[node][i][j] == 1, path[i][j][i][j-1] == 1, Sum([tmp for tmp in utmplist]) == 0,
+                                Or(Sum([tmp for tmp in dtmplist]) == 1, path[i][j][i][j+1] == 0),
+                                Or(Sum([tmp for tmp in rtmplist]) == 1, path[i][j][i+1][j] == 0),
+                                Or(Sum([tmp for tmp in ltmplist]) == 1, path[i][j][i-1][j] == 0)),
+                            Sum([tmp for tmp in uoutlist]) == 1))
                         utmplist.append(op_exist[id][i][j-1])
                         utmplist.append(wire_exist[node][id][i][j-1])
-                        ulist.append(op_exist[id][i][j-1])
-                        ulist.append(wire_exist[node][id][i][j-1])
-                        if i < wd-1 and i > 0 and j < hi-1:
-                            s.add(Implies(And(op_exist[node][i][j] == 1, path[i][j][i][j-1] == 1,
-                                              wire_exist[node][id][i+1][j] == 0, wire_exist[node][id][i-1][j] == 0,
-                                              wire_exist[node][id][i][j+1] == 0), Sum([tmp for tmp in ulist]) == 1))
-                        elif i < wd-1 and i > 0:
-                            s.add(Implies(And(op_exist[node][i][j] == 1, path[i][j][i][j-1] == 1,
-                                              wire_exist[node][id][i+1][j] == 0, wire_exist[node][id][i-1][j] == 0),
-                                          Sum([tmp for tmp in ulist]) == 1))
-                        elif i < wd-1 and j < hi-1:
-                            s.add(Implies(And(op_exist[node][i][j] == 1, path[i][j][i][j-1] == 1,
-                                              wire_exist[node][id][i+1][j] == 0, wire_exist[node][id][i][j+1] == 0),
-                                          Sum([tmp for tmp in ulist]) == 1))
-                        elif i > 0 and j < hi-1:
-                            s.add(Implies(And(op_exist[node][i][j] == 1, path[i][j][i][j-1] == 1,
-                                              wire_exist[node][id][i-1][j] == 0, wire_exist[node][id][i][j+1] == 0),
-                                          Sum([tmp for tmp in ulist]) == 1))
-                        elif i < wd-1:
-                            s.add(Implies(And(op_exist[node][i][j] == 1, path[i][j][i][j-1] == 1,
-                                              wire_exist[node][id][i+1][j] == 0), Sum([tmp for tmp in ulist]) == 1))
-                        elif i > 0:
-                            s.add(Implies(And(op_exist[node][i][j] == 1, path[i][j][i][j-1] == 1,
-                                              wire_exist[node][id][i-1][j] == 0), Sum([tmp for tmp in ulist]) == 1))
-                        elif j < hi-1:
-                            s.add(Implies(And(op_exist[node][i][j] == 1, path[i][j][i][j-1] == 1,
-                                              wire_exist[node][id][i][j+1] == 0), Sum([tmp for tmp in ulist]) == 1))
-                        else:
-                            s.add(Implies(And(op_exist[node][i][j] == 1, path[i][j][i][j-1] == 1),
-                                          Sum([tmp for tmp in ulist]) == 1))
-                #s.add(Sum([tmp for tmp in rtmplist]) <= 1)
-                #s.add(Sum([tmp for tmp in ltmplist]) <= 1)
-                #s.add(Sum([tmp for tmp in utmplist]) <= 1)
-                #s.add(Sum([tmp for tmp in dtmplist]) <= 1)
-                """
-                # for tonode in circ.find_node_id(node).input:
-                # id = tonode.id
-                # tmplist.append(wire_exist[id][node][i+1][j][i][j])
-                # tmplist.append(op_exist[id][i + 1][j])
-                # tmplist.append(wire_exist[id][node][i-1][j][i][j])
-                # tmplist.append(op_exist[id][i-1][j])
-                # tmplist.append(wire_exist[id][node][i][j+1][i][j])
-                # tmplist.append(op_exist[id][i][j+1])
-                # tmplist.append(wire_exist[node][id][i][j-1][i][j])
-                # tmplist.append(op_exist[id][i][j+1])
-
+                    s.add(If(op_exist[node][i][j] == 1, Sum([tmp for tmp in routlist])+Sum([tmp for tmp in loutlist])+Sum(
+                        [tmp for tmp in doutlist])+Sum([tmp for tmp in uoutlist]) == 1, op_exist[node][i][j] == 0))
+                # s.add(If(op_exist[node][i][j] == 1, Sum([tmp for tmp in tmplist]) == len(circ.find_node_id(node).input),op_exist[node][i][j] == 0))
+                # s.add(Sum([tmp for tmp in rtmplist]) <= 1, Sum([tmp for tmp in ltmplist]) <= 1, Sum([tmp for tmp in dtmplist]) <= 1, Sum([tmp for tmp in utmplist]) <= 1)
 
     # wireはループしない制約
     # 0 <= path <= 1 
-    for i in range(wd):
-        for j in range(hi):
-            for ir in range(wd):
-                for jr in range(hi):
+    for i in range(wd+1):
+        for j in range(hi+1):
+            for ir in range(wd+1):
+                for jr in range(hi+1):
                     s.add(path[i][j][ir][jr]>=0, path[i][j][ir][jr]<=1)
                     s.add(path[i][j][i][j]==0)
-                    for irr in range(wd):
-                        for jrr in range(hi):
+                    for irr in range(wd+1):
+                        for jrr in range(hi+1):
                             s.add(Implies(And(path[i][j][ir][jr]==1, path[ir][jr][irr][jrr]==1),path[i][j][irr][jrr]==1))
 
     # connectが存在する所にpathを通す制約
@@ -335,46 +244,54 @@ def main():
 
 
     # wireが途切れないようにする制約
-    #for j in range(wd):
-     #   for k in range(hi):
-      #      pathlist = []
-       #     if j<wd-1:
-        #        pathlist.append(path[j][k][j + 1][k])
-         #       pathlist.append(path[j + 1][k][j][k])
-          #  if j>0:
-           #     pathlist.append(path[j][k][j - 1][k])
-            #    pathlist.append(path[j - 1][k][j][k])
-            #if k<hi-1:
-             #   pathlist.append(path[j][k][j][k + 1])
-             #   pathlist.append(path[j][k + 1][j][k])
-            #if k<0:
-             #   pathlist.append(path[j][k][j][k - 1])
-              #  pathlist.append(path[j][k - 1][j][k])
-            #for i in range(circ.op_num):
-             #   for tonode in range(circ.op_num):
-              #      s.add(If(wire_exist[i][tonode][j][k] == 1, Sum([tmpath for tmpath in pathlist]) >= 2,wire_exist[i][tonode][j][k] == 0))
-                #if circ.find_node_id(tonode)!=-1:
-                    #for node in circ.find_node_id(tonode).input:
-                        #i = node.id
-                        #tmplist = []
-                        #if j<wd-1:
-                           # tmplist.append(wire_exist[i][tonode][j+1][k])
-                          #  tmplist.append(op_exist[i][j+1][k])
-                         #   tmplist.append(op_exist[tonode][j+1][k])
-                        #if j>0:
-                           # tmplist.append(wire_exist[i][tonode][j-1][k])
-                          #  tmplist.append(op_exist[i][j-1][k])
-                         #   tmplist.append(op_exist[tonode][j-1][k])
-                        #if k>hi-1:
-                           # tmplist.append(wire_exist[i][tonode][j][k+1])
-                          #  tmplist.append(op_exist[i][j][k+1])
-                         #   tmplist.append(op_exist[tonode][j][k+1])
-                        #if k>0:
-                           # tmplist.append(wire_exist[i][tonode][j][k-1])
-                          #  tmplist.append(op_exist[i][j][k-1])
-                         #   tmplist.append(op_exist[tonode][j][k-1])
-                        #s.add(If(wire_exist[i][tonode][j][k]==1, Sum([tmp for tmp in tmplist])>=2, wire_exist[i][tonode][j][k]==0))
+    # todo : 色々とおかしいかも
+    for i in range(wd):
+        for j in range(hi):
+            for node in range(circ.op_num):
 
+    """
+    for j in range(wd):
+        for k in range(hi):
+            pathlist = []
+            if j < wd-1:
+                pathlist.append(path[j][k][j+1][k])
+                pathlist.append(path[j+1][k][j][k])
+            if j > 0:
+                pathlist.append(path[j][k][j-1][k])
+                pathlist.append(path[j-1][k][j][k])
+            if k < hi-1:
+                pathlist.append(path[j][k][j][k+1])
+                pathlist.append(path[j][k+1][j][k])
+            if k < 0:
+                pathlist.append(path[j][k][j][k-1])
+                pathlist.append(path[j][k-1][j][k])
+            for i in range(circ.op_num):
+                for tonode in range(circ.op_num):
+                    s.add(If(wire_exist[i][tonode][j][k] == 1, Sum([tmpath for tmpath in pathlist]) >= 2,
+                             wire_exist[i][tonode][j][k] == 0))
+                if circ.find_node_id(tonode) != -1:
+                    for node in circ.find_node_id(tonode).input:
+                        i = node.id
+                        tmplist = []
+                        if j < wd-1:
+                            tmplist.append(wire_exist[i][tonode][j+1][k])
+                            tmplist.append(op_exist[i][j+1][k])
+                            tmplist.append(op_exist[tonode][j+1][k])
+                        if j > 0:
+                            tmplist.append(wire_exist[i][tonode][j-1][k])
+                            tmplist.append(op_exist[i][j-1][k])
+                            tmplist.append(op_exist[tonode][j-1][k])
+                        if k > hi-1:
+                            tmplist.append(wire_exist[i][tonode][j][k+1])
+                            tmplist.append(op_exist[i][j][k+1])
+                            tmplist.append(op_exist[tonode][j][k+1])
+                        if k > 0:
+                            tmplist.append(wire_exist[i][tonode][j][k-1])
+                            tmplist.append(op_exist[i][j][k-1])
+                            tmplist.append(op_exist[tonode][j][k-1])
+                        s.add(If(wire_exist[i][tonode][j][k] == 1, Sum([tmp for tmp in tmplist]) >= 2,
+                                 wire_exist[i][tonode][j][k] == 0))
+                                 """
     # wireが合流しないようにする制約
     for i in range(wd):
         for j in range(hi):
@@ -391,9 +308,32 @@ def main():
                     for sonode in circ.find_node_id(node).input:
                         id = sonode.id
                         s.add(Implies(wire_exist[id][node][i][j]==1, Sum([tmp for tmp in tmplist])<=1))
-
-    # todo : 空白のクロックゾーンからpathが出ないようにする制約(5/6)
-
+    # wireがあった場合sourceのopにつながっているようにする制約
+    for i in range(wd):
+        for j in range(hi):
+            for node in range(circ.op_num):
+                for sonode in circ.find_node_id(node).input:
+                    id = sonode.id
+                    for ir in range(wd):
+                        for jr in range(hi):
+                            s.add(Implies(And(wire_exist[id][node][i][j]==1, op_exist[id][ir][jr]==1), path[ir][jr][i][j]==1))
+    # 空白のクロックゾーンからpathが出ないようにする制約
+    for i in range(wd):
+        for j in range(hi):
+            tmplist = []
+            for node in range(circ.op_num):
+                tmplist.append(op_exist[node][i][j])
+                for sonode in circ.find_node_id(node).input:
+                    id = sonode.id
+                    tmplist.append(wire_exist[id][node][i][j])
+            if i < wd-1:
+                s.add(Implies(Sum([tmp for tmp in tmplist]) == 0, And(path[i][j][i+1][j] == 0, path[i+1][j][i][j] == 0)))
+            if i > 0:
+                s.add(Implies(Sum([tmp for tmp in tmplist]) == 0, And(path[i][j][i-1][j] == 0, path[i-1][j][i][j] == 0)))
+            if j < hi-1:
+                s.add(Implies(Sum([tmp for tmp in tmplist]) == 0, And(path[i][j][i][j+1] == 0, path[i][j+1][i][j] == 0)))
+            if j > 0:
+                s.add(Implies(Sum([tmp for tmp in tmplist]) == 0, And(path[i][j][i][j-1] == 0, path[i][j][i][j-1] == 0)))
     # 同じクロックゾーンを跨るpathが2つ以上存在しない制約
     for i in range(wd):
         for j in range(hi):
@@ -433,9 +373,35 @@ def main():
                 clist.append(connect[i][j][i][j-1])
                 s.add(Sum([tmp for tmp in clist]) <= 1)
                 s.add(Sum([tmp for tmp in tmplist]) <= 1)
+    # クロックゾーンが提供するデータパスに従ってのみpathを定義できる制約
+    for i in range(wd):
+        for j in range(hi):
+            if i < wd-1:
+                s.add(If(path[i][j][i+1][j] == 1, Or(And(clock_zone[i][j] == 1, clock_zone[i+1][j] == 2),
+                                                     And(clock_zone[i][j] == 2, clock_zone[i+1][j] == 3),
+                                                     And(clock_zone[i][j] == 3, clock_zone[i+1][j] == 4),
+                                                     And(clock_zone[i][j] == 4, clock_zone[i+1][j] == 1)),
+                                                     path[i][j][i+1][j] == 0))
+            if i > 0:
+                s.add(If(path[i][j][i-1][j] == 1, Or(And(clock_zone[i][j] == 1, clock_zone[i-1][j] == 2),
+                                                     And(clock_zone[i][j] == 2, clock_zone[i-1][j] == 3),
+                                                     And(clock_zone[i][j] == 3, clock_zone[i-1][j] == 4),
+                                                     And(clock_zone[i][j] == 4, clock_zone[i-1][j] == 1)),
+                                                     path[i][j][i-1][j] == 0))
+            if j < hi-1:
+                s.add(If(path[i][j][i][j+1] == 1, Or(And(clock_zone[i][j] == 1, clock_zone[i][j+1] == 2),
+                                                     And(clock_zone[i][j] == 2, clock_zone[i][j+1] == 3),
+                                                     And(clock_zone[i][j] == 3, clock_zone[i][j+1] == 4),
+                                                     And(clock_zone[i][j] == 4, clock_zone[i][j+1] == 1)),
+                                                     path[i][j][i][j+1] == 0))
+            if j > 0:
+                s.add(If(path[i][j][i][j-1] == 1, Or(And(clock_zone[i][j] == 1, clock_zone[i][j-1] == 2),
+                                                     And(clock_zone[i][j] == 2, clock_zone[i][j-1] == 3),
+                                                     And(clock_zone[i][j] == 3, clock_zone[i][j-1] == 4),
+                                                     And(clock_zone[i][j] == 4, clock_zone[i][j-1] == 1)),
+                                                     path[i][j][i][j-1] == 0))
 
-
-    #pathが存在するところにはopかwireが存在するという制約
+    # pathが存在するところにはopかwireが存在するという制約
 
     # print model or
     r = s.check()
@@ -486,6 +452,7 @@ def main():
                 else:
                     print("    ",end='')
             print()
+        """
         print("\nconnect")
         for j in range(hi):
             for i in range(wd-1):
@@ -506,15 +473,16 @@ def main():
                     print("   ",end='')
                 print(" ",end='')
             print()
+        
         print("\nclock_zone")
         for j in range(hi):
             for i in range(wd):
                 print (" [%d] " % m[clock_zone[i][j]].as_long(), end='')
             print()
         print()
+        """""
     else:
         print(r)
-       
-    
+
 if __name__ == '__main__':
     main()
