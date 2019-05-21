@@ -480,7 +480,7 @@ def main():
                         if m[wire_exist[id][i][j][k]].as_long() !=0:
                             frg = id
                             frg2 = i
-                print(' [%s:%s] '% (frg, ), end='')
+                print(' [%s:%s] '% (frg, frg2), end='')
                 frg = '*'
             print()
         # for node in range(circ.op_num)

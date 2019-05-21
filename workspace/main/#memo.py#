@@ -1,0 +1,12 @@
+s.add(Implies(And(op_exist[node][i][j] == 1, path[i+1][j][i][j] == 1), Sum([tmp for tmp in rlist]) == 1))
+
+s.add(Implies(And(op_exist[node][i][j] == 1, path[i-1][j][i][j] == 1,
+                                              wire_exist[id][node][i+1][j] == 0), Sum([tmp for tmp in llist]) == 1))
+
+s.add(Implies(And(op_exist[node][i][j] == 1, path[i][j+1][i][j] == 1,
+                                              wire_exist[id][node][i+1][j] == 0, wire_exist[id][node][i-1][j] == 0),
+                                          Sum([tmp for tmp in dlist]) == 1))
+
+s.add(Implies(And(op_exist[node][i][j] == 1, path[i][j-1][i][j] == 1,
+                                              wire_exist[id][node][i+1][j] == 0, wire_exist[id][node][i-1][j] == 0,
+                                              wire_exist[id][node][i][j+1] == 0), Sum([tmp for tmp in ulist]) == 1))
