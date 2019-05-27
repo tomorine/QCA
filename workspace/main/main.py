@@ -1,14 +1,12 @@
 # tomorow@ngc.is.ritsumei.ac.jp
 # writing by python3 
 # coding:utf-8
-# Implies関数はバグの元. 極力If関数を使うべし
 # インポートz3
 from z3 import *  
 from circ import *
 import time
 from collections import defaultdict
 # import sys
-
 # main
 def main():
     start_time = time.time()
@@ -22,8 +20,8 @@ def main():
     circ = Make_Network.blif(str)
     Print_Network.node_inf(circ)
 
-    hi = 6 # circuit high
-    wd = 7 # circuit wide
+    hi = 5 # circuit high
+    wd = 6 # circuit wide
     s = Solver() # sは制約式の集合
 
     # 以下制約式の追加
@@ -31,14 +29,13 @@ def main():
     # wire_exist is int variable : wire_exist[source_op][distination_op][wide][high]が存在するとき１になる
     # clock_zone is int variable : clock_zone[wide][high]のクロックゾーンを管理(1<=clock_zone<=4)
     # path is int variable : path[a][b][c][d]が位置の時クロックゾーン[a][b]から[c][d]にデータフローが存在する
-    # ic is int variable : operatorの周りのクロックゾーンにファンイン数（ファンアウト数）と同じ数だけ入力（出力）を確約する。
-    # todo : wireがoperatorから離れてしまう問題(4/30)
+    # connect is int variable : operatorの周りのクロックゾーンにファンイン数（ファンアウト数）と同じ数だけ入力（出力）を確約する。
     op_exist = [[[Int("op_exist[%d][%d][%d]" % (k,j,i)) for i in range(hi)] for j in range(wd)]for k in range(circ.op_num)]
     wire_exist = [[[[Int("wire_exist[%d][%d][%d][%d]" % (m,k,j,i)) for i in range(hi)] for j in range(wd)] for k in range(circ.op_num)] for m in range(circ.op_num)]
     clock_zone = [[Int("clock_zone[%d][%d]" % (j, i)) for i in range(hi)] for j in range(wd)]
     path = [[[[Int("path[%d][%d][%d][%d]" % (l,k,j,i)) for i in range(hi+1)] for j in range(wd+1)] for k in range(hi+1)] for l in range(wd+1)]
     connect = [[[[Int("connect[%d][%d][%d][%d]" % (m,k,j,i)) for i in range(hi+1)] for j in range(wd+1)] for k in range(hi+1)] for m in range(wd+1)]
-    # 0 <= op_exist,wire_exist,connect <= 1
+    # 0 <= op_exist,wire_exist <= 1
     # 1 <= clock_zone <= 4
     for i in range(circ.op_num):
         for j in range(wd):
@@ -73,21 +70,11 @@ def main():
     # 隣接するクロックゾーンは違う数字でなければならない制約
     for i in range(wd):
         for j in range(hi):
-            if i<wd-1:
+            if i<wd-2:
                 s.add(clock_zone[i][j]!=clock_zone[i+1][j])
-            if j<hi-1:
+            if j<hi - 1:
                 s.add(clock_zone[i][j]!=clock_zone[i][j+1])
-    # 余分なクロックゾーンを使用禁止にする制約
-    """
-    for i in range(wd+1):
-        s.add(connect[i][hi][i][hi-1] == 0)
-        s.add(connect[i][hi-1][i][hi] == 0)
-    for j in range(hi+1):
-        s.add(connect[wd][j][wd-1][j] == 0)
-        s.add(connect[wd-1][j][wd][j]== 0)
-    """
     # operatorの隣接するクロックゾーンにファンイン（ファンアウト）数と同じ数のconnectを定義する制約
-    # 同時にopかwireを定義する定義する制約
     for i in range(wd):
         for j in range(hi):
             for node in range(circ.op_num):
@@ -105,235 +92,80 @@ def main():
                 if j > 0:
                     inlist.append(connect[i][j - 1][i][j])
                     outlist.append(connect[i][j][i][j - 1])
-                s.add(If(op_exist[node][i][j] == 1, Sum([tmp for tmp in inlist]) == len(circ.find_node_id(node).input),
-                         op_exist[node][i][j] == 0)) # opのファンイン数を定義
-                s.add(If(op_exist[node][i][j] == 1, Sum([tmp for tmp in outlist]) == len(circ.find_node_id(node).output),
-                        op_exist[node][i][j] == 0)) # opのファンアウト数を定義
-                rtmplist = [] # 右方向のwireかopを複数回使わせないための変数
-                ltmplist = [] # 左方向のwireかopを複数回使わせないための変数
-                utmplist = [] # 上方向のwireかopを複数回使わせないための変数
-                dtmplist = [] # 下方向のwireかopを複数回使わせないための変数
-                # opに入る方のconnect
-                for sonode in circ.find_node_id(node).input:
-                    rinlist = [] # opの隣接セルを定義するための変数（右）
-                    uinlist = [] # opの隣接セルを定義するための変数（左）
-                    dinlist = [] # opの隣接セルを定義するための変数（下）
-                    linlist = [] # opの隣接セルを定義するための変数（上）
-                    id = sonode.id
-                    if i < wd-1:
-                        rinlist.append(op_exist[id][i+1][j])
-                        rinlist.append(wire_exist[id][node][i+1][j])
-                        s.add(Implies(And(op_exist[node][i][j] == 1, connect[i+1][j][i][j] == 1,
-                                          Sum([tmp for tmp in rtmplist]) == 0), Sum([tmp for tmp in rinlist]) == 1))
-                        rtmplist.append(op_exist[id][i+1][j])
-                        rtmplist.append(wire_exist[id][node][i+1][j])
-                    if i > 0:
-                        linlist.append(op_exist[id][i-1][j])
-                        linlist.append(wire_exist[id][node][i-1][j])
-                        s.add(Implies(
-                            And(op_exist[node][i][j] == 1, connect[i-1][j][i][j] == 1, Sum([tmp for tmp in ltmplist]) == 0,
-                                Or(Sum([tmp for tmp in rtmplist]) == 1, connect[i+1][j][i][j]==0)),
-                                Sum([tmp for tmp in linlist]) == 1))
-                        ltmplist.append(op_exist[id][i-1][j])
-                        ltmplist.append(wire_exist[id][node][i-1][j])
-                    if j < hi-1:
-                        dinlist.append(op_exist[id][i][j+1])
-                        dinlist.append(wire_exist[id][node][i][j+1])
-                        s.add(Implies(
-                            And(op_exist[node][i][j] == 1, connect[i][j+1][i][j] == 1, Sum([tmp for tmp in dtmplist]) == 0,
-                                Or(Sum([tmp for tmp in rtmplist]) == 1, connect[i+1][j][i][j] == 0),
-                                Or(Sum([tmp for tmp in ltmplist]) == 1, connect[i-1][j][i][j] == 0)),
-                                Sum([tmp for tmp in dinlist]) == 1))
-                        dtmplist.append(op_exist[id][i][j+1])
-                        dtmplist.append(wire_exist[id][node][i][j+1])
-                    if j > 0:
-                        uinlist.append(op_exist[id][i][j-1])
-                        uinlist.append(wire_exist[id][node][i][j-1])
-                        s.add(Implies(
-                            And(op_exist[node][i][j] == 1, connect[i][j-1][i][j] == 1, Sum([tmp for tmp in utmplist]) == 0,
-                                Or(Sum([tmp for tmp in dtmplist]) == 1, connect[i][j+1][i][j] == 0),
-                                Or(Sum([tmp for tmp in rtmplist]) == 1, connect[i+1][j][i][j] == 0),
-                                Or(Sum([tmp for tmp in ltmplist]) == 1, connect[i-1][j][i][j] == 0)),
-                                Sum([tmp for tmp in uinlist]) == 1))
-                        utmplist.append(op_exist[id][i][j-1])
-                        utmplist.append(wire_exist[id][node][i][j-1])
-                    s.add(If(op_exist[node][i][j] == 1, Sum([tmp for tmp in rinlist])+Sum([tmp for tmp in linlist])+Sum(
-                        [tmp for tmp in dinlist])+Sum([tmp for tmp in uinlist]) == 1, op_exist[node][i][j] == 0))
-                rtmplist.clear()
-                ltmplist.clear()
-                utmplist.clear()
-                dtmplist.clear()
-                # opから出る方のconnectに対し定義
-                for tonode in circ.find_node_id(node).output:
-                    routlist = []
-                    uoutlist = []
-                    doutlist = []
-                    loutlist = []
-                    id = tonode.id
-                    if i < wd-1:
-                        routlist.append(op_exist[id][i+1][j])
-                        routlist.append(wire_exist[node][id][i+1][j])
-                        s.add(Implies(And(op_exist[node][i][j] == 1, connect[i][j][i+1][j] == 1,
-                                          Sum([tmp for tmp in rtmplist]) == 0), Sum([tmp for tmp in routlist]) == 1))
-                        rtmplist.append(op_exist[id][i+1][j])
-                        rtmplist.append(wire_exist[node][id][i+1][j])
-                    if i > 0:
-                        loutlist.append(op_exist[id][i-1][j])
-                        loutlist.append(wire_exist[node][id][i-1][j])
-                        s.add(Implies(
-                            And(op_exist[node][i][j] == 1, connect[i][j][i-1][j] == 1, Sum([tmp for tmp in ltmplist]) == 0,
-                                Or(Sum([tmp for tmp in rtmplist]) == 1, connect[i][j][i+1][j] == 0)),
-                            Sum([tmp for tmp in loutlist]) == 1))
-                        ltmplist.append(op_exist[id][i-1][j])
-                        ltmplist.append(wire_exist[node][id][i-1][j])
-                    if j < hi-1:
-                        doutlist.append(op_exist[id][i][j+1])
-                        doutlist.append(wire_exist[node][id][i][j+1])
-                        s.add(Implies(
-                            And(op_exist[node][i][j] == 1, connect[i][j][i][j+1] == 1, Sum([tmp for tmp in dtmplist]) == 0,
-                                Or(Sum([tmp for tmp in rtmplist]) == 1, connect[i][j][i+1][j] == 0),
-                                Or(Sum([tmp for tmp in ltmplist]) == 1, connect[i][j][i-1][j] == 0)),
-                            Sum([tmp for tmp in doutlist]) == 1))
-                        dtmplist.append(op_exist[id][i][j+1])
-                        dtmplist.append(wire_exist[node][id][i][j+1])
-                    if j > 0:
-                        uoutlist.append(op_exist[id][i][j-1])
-                        uoutlist.append(wire_exist[node][id][i][j-1])
-                        s.add(Implies(
-                            And(op_exist[node][i][j] == 1, connect[i][j][i][j-1] == 1, Sum([tmp for tmp in utmplist]) == 0,
-                                Or(Sum([tmp for tmp in dtmplist]) == 1, connect[i][j][i][j+1] == 0),
-                                Or(Sum([tmp for tmp in rtmplist]) == 1, connect[i][j][i+1][j] == 0),
-                                Or(Sum([tmp for tmp in ltmplist]) == 1, connect[i][j][i-1][j] == 0)),
-                            Sum([tmp for tmp in uoutlist]) == 1))
-                        utmplist.append(op_exist[id][i][j-1])
-                        utmplist.append(wire_exist[node][id][i][j-1])
-                    s.add(If(op_exist[node][i][j] == 1,
-                             Sum([tmp for tmp in routlist])+Sum([tmp for tmp in loutlist])+Sum(
-                                 [tmp for tmp in doutlist])+Sum([tmp for tmp in uoutlist]) == 1,
-                             op_exist[node][i][j] == 0))
-                rtmplist.clear()
-                ltmplist.clear()
-                utmplist.clear()
-                dtmplist.clear()
+                s.add(Implies(op_exist[node][i][j] == 1, Sum([tmp for tmp in inlist]) == len(circ.find_node_id(node).input))) # opのファンイン数を定義
+                s.add(Implies(op_exist[node][i][j] == 1, Sum([tmp for tmp in outlist]) == len(circ.find_node_id(node).output))) # opのファンアウト数を定義
     # wireに対してconnectを定義する
     for i in range(wd):
         for j in range(hi):
             for node in range(circ.op_num):
                 inlist = []
                 outlist = []
-                if i < wd-1:
+                if i < wd - 1:
                     inlist.append(connect[i+1][j][i][j])
                     outlist.append(connect[i][j][i+1][j])
                 if i > 0:
                     inlist.append(connect[i-1][j][i][j])
                     outlist.append(connect[i][j][i-1][j])
-                if j < hi-1:
+                if j < hi - 1:
                     inlist.append(connect[i][j+1][i][j])
                     outlist.append(connect[i][j][i][j+1])
                 if j > 0:
                     inlist.append(connect[i][j-1][i][j])
                     outlist.append(connect[i][j][i][j-1])
-                rtmplist = []
-                ltmplist = []
-                dtmplist = []
-                utmplist = []
                 for sonode in circ.find_node_id(node).input:
                     id = sonode.id
-                    s.add(If(wire_exist[id][node][i][j] == 1, Sum([tmp for tmp in inlist]) == 1,
-                            wire_exist[id][node][i][j] == 0))  # wireに対してイン数を定義(in)
-                    s.add(If(wire_exist[id][node][i][j] == 1, Sum([tmp for tmp in outlist]) == 1,
-                            wire_exist[id][node][i][j] == 0))  # wireに対してアウト数を定義(out)
-                    rinlist = []
-                    linlist = []
-                    dinlist = []
-                    uinlist = []
+                    s.add(Implies(wire_exist[id][node][i][j] == 1, Sum([tmp for tmp in inlist]) == 1))  # wireに対してイン数を定義(in)
+                    s.add(Implies(wire_exist[id][node][i][j] == 1, Sum([tmp for tmp in outlist]) == 1))  # wireに対してアウト数を定義(out)
+    # connectがある所はwireかopが存在する制約
+    for i in range(wd):
+        for j in range(hi):
+            for node in range(circ.op_num):
+                for sonode in circ.find_node_id(node).input:
+                    right = []
+                    left = []
+                    down = []
+                    up = []
+                    id = sonode.id
                     if i < wd-1:
-                        rinlist.append(wire_exist[id][node][i+1][j])
-                        rinlist.append(op_exist[id][i+1][j])
-                        s.add(Implies(And(wire_exist[id][node][i][j]==1, connect[i+1][j][i][j]==1), Sum([tmp for tmp in rinlist])==1))
-                        rtmplist.append(wire_exist[id][node][i+1][j])
-                        rtmplist.append(op_exist[id][i+1][j])
+                        right.append(wire_exist[id][node][i+1][j])
+                        right.append(op_exist[id][i+1][j])
                     if i > 0:
-                        linlist.append(wire_exist[id][node][i-1][j])
-                        linlist.append(op_exist[id][i-1][j])
-                        s.add(Implies(And(wire_exist[id][node][i][j] == 1, connect[i-1][j][i][j] == 1,
-                                          Or(connect[i+1][j][i][j] == 0, Sum([tmp for tmp in rtmplist]) == 1)),
-                                        Sum([tmp for tmp in linlist]) == 1))
-                        ltmplist.append(wire_exist[id][node][i-1][j])
-                        ltmplist.append(op_exist[id][i-1][j])
+                        left.append(op_exist[id][i-1][j])
+                        left.append(wire_exist[id][node][i-1][j])
                     if j < hi-1:
-                        dinlist.append(wire_exist[id][node][i][j+1])
-                        dinlist.append(op_exist[id][i][j+1])
-                        s.add(Implies(And(wire_exist[id][node][i][j] == 1, connect[i][j+1][i][j] == 1,
-                                          Or(connect[i+1][j][i][j] == 0, Sum([tmp for tmp in rtmplist]) == 1),
-                                          Or(connect[i-1][j][i][j] == 0, Sum([tmp for tmp in ltmplist]) == 1)),
-                                      Sum([tmp for tmp in dinlist]) == 1))
-                        dtmplist.append(wire_exist[id][node][i][j+1])
-                        dtmplist.append(op_exist[id][i][j+1])
+                        down.append(op_exist[id][i][j+1])
+                        down.append(wire_exist[id][node][i][j+1])
                     if j > 0:
-                        uinlist.append(wire_exist[id][node][i][j-1])
-                        uinlist.append(op_exist[id][i][j-1])
-                        s.add(Implies(And(wire_exist[id][node][i][j] == 1, connect[i][j-1][i][j] == 1,
-                                          Or(connect[i+1][j][i][j] == 0, Sum([tmp for tmp in rtmplist]) == 1),
-                                          Or(connect[i-1][j][i][j] == 0, Sum([tmp for tmp in ltmplist]) == 1),
-                                          Or(connect[i][j+1][i][j] == 0, Sum([tmp for tmp in dtmplist]) == 1),),
-                                      Sum([tmp for tmp in uinlist]) == 1))
-                        utmplist.append(wire_exist[id][node][i][j-1])
-                        utmplist.append(op_exist[id][i][j-1])
-                    s.add(If(op_exist[node][i][j] == 1,
-                             Sum([tmp for tmp in rinlist])+Sum([tmp for tmp in linlist])+Sum(
-                                 [tmp for tmp in dinlist])+Sum([tmp for tmp in uinlist]) == 1,
-                             op_exist[node][i][j] == 0))
-                rtmplist.clear()
-                ltmplist.clear()
-                utmplist.clear()
-                dtmplist.clear()
-                for tonode in circ.find_node_id(node).output:
-                    id = tonode.id
-                    routlist = []
-                    loutlist = []
-                    doutlist = []
-                    uoutlist = []
-                    if i < wd-1:
-                        routlist.append(wire_exist[node][id][i+1][j])
-                        routlist.append(op_exist[id][i+1][j])
-                        s.add(Implies(And(wire_exist[node][id][i][j] == 1, connect[i][j][i+1][j] == 1),
-                                      Sum([tmp for tmp in routlist]) == 1))
-                        rtmplist.append(wire_exist[node][id][i+1][j])
-                        rtmplist.append(op_exist[id][i+1][j])
-                    if i > 0:
-                        loutlist.append(wire_exist[node][id][i-1][j])
-                        loutlist.append(op_exist[id][i-1][j])
-                        s.add(Implies(And(wire_exist[node][id][i][j] == 1, connect[i][j][i-1][j] == 1,
-                                          Or(connect[i][j][i+1][j] == 0, Sum([tmp for tmp in rtmplist]) == 1)),
-                                      Sum([tmp for tmp in loutlist]) == 1))
-                        ltmplist.append(wire_exist[node][id][i-1][j])
-                        ltmplist.append(op_exist[id][i-1][j])
-                    if j < hi-1:
-                        doutlist.append(wire_exist[node][id][i][j+1])
-                        doutlist.append(op_exist[id][i][j+1])
-                        s.add(Implies(And(wire_exist[node][id][i][j] == 1, connect[i][j][i][j+1] == 1,
-                                          Or(connect[i][j][i+1][j] == 0, Sum([tmp for tmp in rtmplist]) == 1),
-                                          Or(connect[i][j][i-1][j] == 0, Sum([tmp for tmp in ltmplist]) == 1)),
-                                      Sum([tmp for tmp in doutlist]) == 1))
-                        dtmplist.append(wire_exist[node][id][i][j+1])
-                        dtmplist.append(op_exist[id][i][j+1])
-                    if j > 0:
-                        uoutlist.append(wire_exist[node][id][i][j-1])
-                        uoutlist.append(op_exist[id][i][j-1])
-                        s.add(Implies(And(wire_exist[node][id][i][j] == 1, connect[i][j][i][j-1] == 1,
-                                          Or(connect[i][j][i+1][j] == 0, Sum([tmp for tmp in rtmplist]) == 1),
-                                          Or(connect[i][j][i-1][j] == 0, Sum([tmp for tmp in ltmplist]) == 1),
-                                          Or(connect[i][j][i][j+1] == 0, Sum([tmp for tmp in dtmplist]) == 1), ),
-                                      Sum([tmp for tmp in uoutlist]) == 1))
-                        utmplist.append(wire_exist[node][id][i][j-1])
-                        utmplist.append(op_exist[id][i][j-1])
-                    s.add(If(op_exist[node][i][j] == 1, Sum([tmp for tmp in routlist])+Sum([tmp for tmp in loutlist])+Sum(
-                        [tmp for tmp in doutlist])+Sum([tmp for tmp in uoutlist]) == 1, op_exist[node][i][j] == 0))
-                rtmplist.clear()
-                ltmplist.clear()
-                utmplist.clear()
-                dtmplist.clear()
+                        up.append(op_exist[id][i][j-1])
+                        up.append(wire_exist[id][node][i][j-1])
+                    s.add(Implies(Or(op_exist[node][i][j] == 1, wire_exist[id][node][i][j] == 1),
+                                    Sum([tmp for tmp in right]) * connect[i+1][j][i][j]
+                                    + Sum([tmp for tmp in left]) * connect[i-1][j][i][j]
+                                    + Sum([tmp for tmp in down]) * connect[i][j+1][i][j]
+                                    + Sum([tmp for tmp in up]) * connect[i][j-1][i][j] == 1))
+                    for tonode in circ.find_node_id(node).output:
+                        right = []
+                        left = []
+                        down = []
+                        up = []
+                        id = tonode.id
+                        if i < wd-1:
+                            right.append(op_exist[id][i+1][j])
+                            right.append(wire_exist[node][id][i+1][j])
+                        if i > 0:
+                            left.append(op_exist[id][i-1][j])
+                            left.append(wire_exist[node][id][i-1][j])
+                        if j < hi-1:
+                            down.append(op_exist[id][i][j+1])
+                            down.append(wire_exist[node][id][i][j+1])
+                        if j > 0:
+                            up.append(op_exist[id][i][j-1])
+                            up.append(wire_exist[node][id][i][j-1])
+                        s.add(Implies(Or(op_exist[node][i][j] == 1, wire_exist[node][id][i][j] == 1),
+                                        Sum([tmp for tmp in right])*connect[i][j][i+1][j]
+                                      + Sum([tmp for tmp in left])*connect[i][j][i-1][j]
+                                      + Sum([tmp for tmp in down])*connect[i][j][i][j+1]
+                                      + Sum([tmp for tmp in up])*connect[i][j][i][j-1] == 1))
     # wireはループしない制約
     # 0 <= path <= 1 
     for i in range(wd+1):
@@ -345,141 +177,121 @@ def main():
                     for irr in range(wd+1):
                         for jrr in range(hi+1):
                             s.add(Implies(And(path[i][j][ir][jr]==1, path[ir][jr][irr][jrr]==1),path[i][j][irr][jrr]==1))
-    """""
     # connectが距離１以上にならないようにする制約
     for i in range(wd+1):
         for j in range(hi+1):
             for ir in range(wd+1):
                 for jr in range(hi+1):
-                    if abs(i-ir) > 1:
+                    if abs((j-jr)+(i-ir)) >= 2:
                         s.add(connect[i][j][ir][jr] == 0)
-                    elif abs(j-jr) > 1:
-                        s.add(connect[i][j][ir][jr] == 0)
-                    elif abs(i-ir) + abs(j-jr) == 2:
-                        s.add(connect[i][j][ir][jr] == 0)
-    """
     # connectが存在する所にpathを通す制約
     for i in range(wd):
         for j in range(hi):
             for ir in range(wd):
                 for jr in range(hi):
                     s.add(Implies(connect[i][j][ir][jr]==1, path[i][j][ir][jr]==1))
-    # wireが合流しないようにする制約
-    for i in range(wd):
-        for j in range(hi):
-                intmplist = []
-                outtmplist = []
-                if i<wd-1:
-                    intmplist.append(path[i+1][j][i][j])
-                    outtmplist.append(path[i][j][i+1][j])
-                if i>0:
-                    intmplist.append(path[i-1][j][i][j])
-                    outtmplist.append(path[i][j][i-1][j])
-                if j<hi - 1:
-                    intmplist.append(path[i][j+1][i][j])
-                    outtmplist.append(path[i][j][i][j+1])
-                if j>0:
-                    intmplist.append(path[i][j-1][i][j])
-                    outtmplist.append(path[i][j][i][j-1])
+    # 空白のクロックゾーンからconnectが出ないようにする制約
+    for i in range(wd+1):
+        for j in range(hi+1):
+            tmplist = []
+            tmplist.append(0)
+            if i < wd and j < hi:
                 for node in range(circ.op_num):
+                    tmplist.append(op_exist[node][i][j])
                     for sonode in circ.find_node_id(node).input:
                         id = sonode.id
-                        s.add(Implies(wire_exist[id][node][i][j] == 1, Sum([tmp for tmp in intmplist]) <= 1))
-                        s.add(Implies(wire_exist[id][node][i][j] == 1, Sum([tmp for tmp in outtmplist]) <= 1))
-    """
-    # wireがあった場合sourceのopにつながっているようにする制約
-    for i in range(wd):
-        for j in range(hi):
-            for node in range(circ.op_num):
-                for sonode in circ.find_node_id(node).input:
-                    id = sonode.id
-                    for ir in range(wd):
-                        for jr in range(hi):
-                            s.add(Implies(And(wire_exist[id][node][i][j]==1, op_exist[id][ir][jr]==1), path[ir][jr][i][j]==1))
-    """
-    # 空白のクロックゾーンからconnectが出ないようにする制約
-    for i in range(wd):
-        for j in range(hi):
-            tmplist = []
-            for node in range(circ.op_num):
-                tmplist.append(op_exist[node][i][j])
-                for sonode in circ.find_node_id(node).input:
-                    id = sonode.id
-                    tmplist.append(wire_exist[id][node][i][j])
-            if i < wd-1:
+                        tmplist.append(wire_exist[id][node][i][j])
+            if i < wd:
                 s.add(Implies(Sum([tmp for tmp in tmplist]) == 0, And(connect[i][j][i+1][j] == 0, connect[i+1][j][i][j] == 0)))
             if i > 0:
                 s.add(Implies(Sum([tmp for tmp in tmplist]) == 0, And(connect[i][j][i-1][j] == 0, connect[i-1][j][i][j] == 0)))
-            if j < hi-1:
+            if j < hi:
                 s.add(Implies(Sum([tmp for tmp in tmplist]) == 0, And(connect[i][j][i][j+1] == 0, connect[i][j+1][i][j] == 0)))
             if j > 0:
                 s.add(Implies(Sum([tmp for tmp in tmplist]) == 0, And(connect[i][j][i][j-1] == 0, connect[i][j][i][j-1] == 0)))
-    # 同じクロックゾーンを跨るpathが2つ以上存在しない制約
+            """
+            s.add(Implies(And(connect[i][j][i+1][j] == 0, connect[i+1][j][i][j] == 0,
+                          connect[i][j][i-1][j] == 0, connect[i-1][j][i][j] == 0,
+                          connect[i][j][i][j+1] == 0, connect[i][j+1][i][j] == 0,
+                          connect[i][j][i][j-1] == 0, connect[i][j-1][i][j] == 0),Sum([tmp for tmp in tmplist])==0))
+    """
+    # 同じクロックゾーンを跨るconnectが2つ以上存在しない制約
     for i in range(wd):
         for j in range(hi):
-            tmplist = []
             clist = []
-            if i < wd - 1:
-                tmplist.append(path[i+1][j][i][j])
-                tmplist.append(path[i][j][i+1][j])
-                s.add(Sum([tmp for tmp in tmplist])<=1)
+            if i < wd:
                 clist.append(connect[i+1][j][i][j])
                 clist.append(connect[i][j][i+1][j])
-                s.add(Sum([tmp for tmp in clist])<=1)
-                tmplist.clear()
+                s.add(Sum([tmp for tmp in clist]) <= 1)
                 clist.clear()
             if i > 0:
-                tmplist.append(path[i-1][j][i][j])
-                tmplist.append(path[i][j][i-1][j])
-                s.add(Sum([tmp for tmp in tmplist]) <= 1)
                 clist.append(connect[i - 1][j][i][j])
                 clist.append(connect[i][j][i - 1][j])
                 s.add(Sum([tmp for tmp in clist]) <= 1)
-                tmplist.clear()
                 clist.clear()
-            if j < hi - 1:
-                tmplist.append(path[i][j+1][i][j])
-                tmplist.append(path[i][j][i][j+1])
-                s.add(Sum([tmp for tmp in tmplist]) <= 1)
+            if j < hi:
                 clist.append(connect[i][j+1][i][j])
                 clist.append(connect[i][j][i][j+1])
                 s.add(Sum([tmp for tmp in clist]) <= 1)
-                tmplist.clear()
                 clist.clear()
             if j > 0:
-                tmplist.append(path[i][j-1][i][j])
-                tmplist.append(path[i][j][i][j-1])
                 clist.append(connect[i][j-1][i][j])
                 clist.append(connect[i][j][i][j-1])
                 s.add(Sum([tmp for tmp in clist]) <= 1)
-                s.add(Sum([tmp for tmp in tmplist]) <= 1)
-    # クロックゾーンが提供するデータパスに従ってのみpathを定義できる制約
+                clist.clear()
+    # クロックゾーンが提供するデータパスに従ってのみconnectを定義できる制約
     for i in range(wd):
         for j in range(hi):
-            if i < wd-1:
-                s.add(If(path[i][j][i+1][j] == 1, Or(And(clock_zone[i][j] == 1, clock_zone[i+1][j] == 2),
+            if i < wd - 1:
+                s.add(If(connect[i][j][i+1][j] == 1, Or(And(clock_zone[i][j] == 1, clock_zone[i+1][j] == 2),
                                                      And(clock_zone[i][j] == 2, clock_zone[i+1][j] == 3),
                                                      And(clock_zone[i][j] == 3, clock_zone[i+1][j] == 4),
                                                      And(clock_zone[i][j] == 4, clock_zone[i+1][j] == 1)),
-                                                     path[i][j][i+1][j] == 0))
+                                                     connect[i][j][i+1][j] == 0))
             if i > 0:
-                s.add(If(path[i][j][i-1][j] == 1, Or(And(clock_zone[i][j] == 1, clock_zone[i-1][j] == 2),
+                s.add(If(connect[i][j][i-1][j] == 1, Or(And(clock_zone[i][j] == 1, clock_zone[i-1][j] == 2),
                                                      And(clock_zone[i][j] == 2, clock_zone[i-1][j] == 3),
                                                      And(clock_zone[i][j] == 3, clock_zone[i-1][j] == 4),
                                                      And(clock_zone[i][j] == 4, clock_zone[i-1][j] == 1)),
-                                                     path[i][j][i-1][j] == 0))
-            if j < hi-1:
-                s.add(If(path[i][j][i][j+1] == 1, Or(And(clock_zone[i][j] == 1, clock_zone[i][j+1] == 2),
+                                                     connect[i][j][i-1][j] == 0))
+            if j < hi - 1:
+                s.add(If(connect[i][j][i][j+1] == 1, Or(And(clock_zone[i][j] == 1, clock_zone[i][j+1] == 2),
                                                      And(clock_zone[i][j] == 2, clock_zone[i][j+1] == 3),
                                                      And(clock_zone[i][j] == 3, clock_zone[i][j+1] == 4),
                                                      And(clock_zone[i][j] == 4, clock_zone[i][j+1] == 1)),
-                                                     path[i][j][i][j+1] == 0))
+                                                     connect[i][j][i][j+1] == 0))
             if j > 0:
-                s.add(If(path[i][j][i][j-1] == 1, Or(And(clock_zone[i][j] == 1, clock_zone[i][j-1] == 2),
+                s.add(If(connect[i][j][i][j-1] == 1, Or(And(clock_zone[i][j] == 1, clock_zone[i][j-1] == 2),
                                                      And(clock_zone[i][j] == 2, clock_zone[i][j-1] == 3),
                                                      And(clock_zone[i][j] == 3, clock_zone[i][j-1] == 4),
                                                      And(clock_zone[i][j] == 4, clock_zone[i][j-1] == 1)),
-                                                     path[i][j][i][j-1] == 0))
+                                                     connect[i][j][i][j-1] == 0))
+
+    # スループットを向上させる制約のための再起関数。本当はmain外に書きたいが疲れたのでまた今度
+    def search_length(sonode, tonode, tmplist):
+        tmplist.append(1)
+        for i in range(wd):
+            for j in range(hi):
+                tmplist.append(wire_exist[sonode.id][tonode.id][i][j])
+        if sonode.gatetype == "p_input":
+            return (tmplist)
+        else:
+            for node in sonode.input:
+                tmplist = search_length(node, sonode, tmplist)
+    # スループットを向上させる制約
+    for node in range(circ.op_num):
+        tmplistlist = []
+        if len(circ.find_node_id(node).input) >= 2:
+            for sonode in circ.find_node_id(node).input:
+                tmplist = []
+                search_length(sonode, circ.find_node_id(node), tmplist)
+                tmplistlist.append(tmplist)
+            if len(tmplistlist) == 2:
+                s.add(Sum([tmp for tmp in tmplistlist[0]]) == Sum([tmp for tmp in tmplistlist[1]]))
+            if len(tmplistlist) == 3:
+                s.add(Sum([tmp for tmp in tmplistlist[0]]) == Sum([tmp for tmp in tmplistlist[1]]))
+                s.add(Sum([tmp for tmp in tmplistlist[0]]) == Sum([tmp for tmp in tmplistlist[2]]))
+                s.add(Sum([tmp for tmp in tmplistlist[1]]) == Sum([tmp for tmp in tmplistlist[2]]))
     # todo : clock_wireを通すようにクロックゾーンを配置する制約
     # print model or
     r = s.check()
@@ -498,14 +310,14 @@ def main():
             print()
         # print wire
         print("\nwire")
-        for k in range(hi+1):
+        for k in range(hi):
             frg = '*'
             frg2 = '*'
-            for j in range(wd+1):
+            for j in range(wd):
                 for i in range(circ.op_num):
                     for node in circ.find_node_id(i).input:
                         id = node.id
-                        if j != wd and k != hi and m[wire_exist[id][i][j][k]].as_long() !=0:
+                        if m[wire_exist[id][i][j][k]].as_long() !=0:
                             frg = id
                             frg2 = i
                 print(' [%s:%s] '% (frg, frg2), end='')
@@ -514,6 +326,7 @@ def main():
             print()
         # for node in range(circ.op_num)
         # print path
+        """
         print("\npath")
         for j in range(hi+1):
             for i in range(wd):
@@ -533,17 +346,10 @@ def main():
                 else:
                     print("    ",end='')
             print()
-        print("\nconnnect list")
-        for i in range(wd+1):
-            for j in range(hi+1):
-                for ir in range(wd+1):
-                    for jr in range(hi+1):
-                        if m[connect[i][j][ir][jr]].as_long() == 1:
-                            print("connect[%d][%d][%d][%d]" % (i,j,ir,jr))
         """
         print("\nconnect")
-        for j in range(hi):
-            for i in range(wd-1):
+        for j in range(hi+1):
+            for i in range(wd):
                 print("[ ]",end='')
                 if m[connect[i][j][i+1][j]].as_long()==1:
                     print(">",end='')
@@ -552,23 +358,31 @@ def main():
                 else :
                     print(" ",end='')
             print("[ ]")
-            for i in range(wd):
-                if j<hi-1 and m[connect[i][j][i][j+1]].as_long() == 1:
+            for i in range(wd+1):
+                if j<hi and m[connect[i][j][i][j+1]].as_long() == 1:
                     print(" V ",end='')
-                elif j<hi-1 and m[connect[i][j+1][i][j]].as_long() == 1:
+                elif j<hi and m[connect[i][j+1][i][j]].as_long() == 1:
                     print(" A ",end='')
                 else:
                     print("   ",end='')
                 print(" ",end='')
             print()
-        
+        """
         print("\nclock_zone")
         for j in range(hi):
             for i in range(wd):
                 print (" [%d] " % m[clock_zone[i][j]].as_long(), end='')
             print()
         print()
-        """""
+        """
+        print("\nconnnect list")
+        for i in range(wd+1):
+            for j in range(hi+1):
+                for ir in range(wd+1):
+                    for jr in range(hi+1):
+                        if m[connect[i][j][ir][jr]].as_long() == 1:
+                            print("connect[%d][%d][%d][%d]"%(i, j, ir, jr))
+
     else:
         print(r)
     elapsed_time = time.time() - start_time
